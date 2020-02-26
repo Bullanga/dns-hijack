@@ -12,9 +12,9 @@
 #include "dns_RR_t.h"
 
 
-
+#define DOMAIN "duniakato.dks."
 #define IP "127.0.0.1"
-#define COMMENT "More info: <url>"
+#define COMMENT "More info: https://github.com/dhap0/dns-hijack"
 #define MAX_FORKS 0
 
 
@@ -42,7 +42,8 @@ int main(int argc, char *argv[])
   DNS_RR Request, Reply;  
   int RequestLen, ReplyLen; 
 
-  char buffer[1024];
+  char req_domain[256];
+	char client_ip[20];
 
   // creem el master socket
   if( (master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) 
@@ -82,10 +83,11 @@ int main(int argc, char *argv[])
     // considerem tamany minim del paacket 12 bytes
     
     
+		parse_requested_domain(req_domain, Request.Data);
+    // write(1, req_domain, strlen(req_domain));
+		parse_client_ip(client_ip, &client_addr); 
+    //write(1, client_ip, strlen(client_ip));
 
-//    sprintf(buffer, "Requested: %s\n", Request.Data); 
-//    write(1, buffer, strlen(buffer));
-				//printf("FORKS: %d\n", num_forks);
     if(RequestLen >= 12) 
     {
 			if(num_forks < MAX_FORKS) {
@@ -101,8 +103,16 @@ int main(int argc, char *argv[])
 	     		generate_success_response(&Request, IP, COMMENT, master_socket, client_addr, client_len);
 					exit(0);
 				}
-			} else {
-	     	generate_success_response(&Request, IP, COMMENT, master_socket, client_addr, client_len);
+			} else 
+			{
+		
+				if( 0 == strcmp(req_domain, DOMAIN))
+				{		
+		     	generate_success_response(&Request, IP, COMMENT, master_socket, client_addr, client_len);
+				} else 
+				{	
+     			generate_failure_response(&Request,  master_socket, client_addr, client_len);
+				}
 			}
 
    	}

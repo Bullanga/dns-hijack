@@ -129,7 +129,7 @@ enum RCODE
   RCODE_NO_ERROR=0, 	/* no error condition */
   RCODE_FORMAT_ERROR, 	/* format error */
   RCODE_SERVER_ERROR, 	/* server error */
-  RCODE_NAME_ERROR, 	/* name error */
+  RCODE_NXDOMAIN, 	/* no existent domain */
   RCODE_NA, 		/* not implemented (not available) */
   RCODE_REFUSED, 	/* refused */
   };
@@ -147,8 +147,11 @@ void generate_success_response(DNS_RR *Request, char *ip, char *comment, int mas
 
 
 
+void generate_failure_response(DNS_RR *Request, int master_socket, const struct sockaddr client_addr, int client_len);
 
+void parse_requested_domain(char *target, char *data);
 
+void parse_client_ip(char *target, struct sockaddr *client);
 
 
 

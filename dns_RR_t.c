@@ -102,3 +102,61 @@ void generate_success_response(DNS_RR *Request, char *ip, char *comment, int mas
 
 
 
+void generate_failure_response(DNS_RR *Request,  int master_socket, const struct sockaddr client_addr, int client_len){
+
+
+      DNS_RR Reply;
+      // tractem el packet; generem el packet de resposta
+      memset(&Reply,0,sizeof(Reply));
+      
+      Reply.ID = Request->ID;
+      // Assumim error i posem el flac de authoritive reply
+      Reply.Rcode = RCODE_SERVER_ERROR;
+      Reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
+
+      int ReplyLen = 12;
+      // comprovem si podem tractar la peticio
+      if( (Request->Flags & FLAG_REPLY) == 0) 
+      {
+
+        int len = 0;
+        Reply.Rcode = RCODE_NXDOMAIN;
+        Reply.Acount = htons(0); // 0 respostes  
+
+			}
+
+      if( 0 > sendto(master_socket, &Reply, ReplyLen, 0, &client_addr, client_len))
+      {
+        perror("sendto() -> Error");
+        exit(EXIT_FAILURE);
+      }
+
+
+}
+void parse_requested_domain(char *target, char *data) {
+	
+	memset(target,0,(strlen(target)));
+	int i = 1;
+	int dot = (int) data[0];
+	while( dot > 0) {
+
+	strncat(target, &data[i], dot);
+	strcat(target, ".");
+	i += dot;	
+	dot = (int) data[i++];
+
+	}
+
+}
+
+void parse_client_ip(char *target, struct sockaddr *client) {
+
+	
+	memset(target,0,(strlen(target)));
+	char *ip = inet_ntoa(((struct sockaddr_in *)client)->sin_addr);
+	memcpy(target,ip,strlen(ip));
+
+
+}
+
+
