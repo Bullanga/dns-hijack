@@ -31,6 +31,7 @@ guardaIP.o: $(SOURCE)/guardaIP.c
 
 tests: all_tests files_to_test
 	gcc -o test $(TESTS_DIR)/test.c *.o -I $(HEADERS) -I $(T_HEADERS) -I $(T_SOURCE) -I $(SOURCE)   
+	./test
 
 files_to_test:
 	for i in $(FILES_TO_TEST); do \

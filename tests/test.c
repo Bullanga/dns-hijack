@@ -19,7 +19,7 @@ int main(){
 
 
     //Summary
-    printf("\n\nTested finctionalities: %d\n", total_tests);
+    printf("\n\nTested functionalities: %d\n", total_tests);
     printf("Successfull tests: %d\n", success_tests);
 }
 
