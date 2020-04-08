@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <sys/wait.h>
 #include "dns_RR_t.h"
+#include "config.h"
 
 //    ###  AIXO HA D'ANAR AL .H ###
 int num_forks = 0;

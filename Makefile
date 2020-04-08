@@ -13,16 +13,16 @@ all: dns_RR_t.o tests
 	gcc -o dns -I $(HEADERS) $(SOURCE)/dns.c dns_RR_t.o 
 
 clean:     # AIXO ENS HO HEM DE CURRAR
-	rm -rf *.o $(TESTS_DIR)/test dns 
+	rm -rf *.o test dns 
 
 
 #### FITXERS DEL CODI ####
 
-dns_RR_t.o: dns_RR_t.c
-	gcc -c dns_RR_t.c -I $(HEADERS)
+dns_RR_t.o: $(SOURCE)/dns_RR_t.c
+	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
 
-guardaIP.o: guardaIP.c
-	gcc -c guardaIP.c -I $(HEADERS)
+guardaIP.o: $(SOURCE)/guardaIP.c
+	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
 
 
 
