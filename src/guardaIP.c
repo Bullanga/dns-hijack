@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "guardaIP.h"
 
 //void inicia_guardaIP(){
 //    guardaIp =(char**)malloc(3200);
@@ -11,13 +12,17 @@ int calcRange(char* ip_ini, char* ip_fin){
     int ip_finv[4];
     int range;
     char delim[]=".";
-    char* ptr_ini = strtok(ip_ini,delim);
+    char cpy_ini[16];  //Aquesta merda es necessaria pel strtok
+    char cpy_final[16];
+    strncpy(cpy_ini,ip_ini,16);
+    strncpy(cpy_final,ip_fin,16);
+    char* ptr_ini = strtok(cpy_ini,delim);
     int i;
     for(i=0; i < 4; i++){
 	ip_iniv[i] = atoi(ptr_ini);
 	ptr_ini = strtok(NULL,delim);
     }
-    char* ptr_fin = strtok(ip_fin,delim);
+    char* ptr_fin = strtok(cpy_final,delim);
     for(i=0; i < 4; i++){
 	ip_finv[i] = atoi(ptr_fin);
 	ptr_fin = strtok(NULL,delim);

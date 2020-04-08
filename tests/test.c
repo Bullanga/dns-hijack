@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include "guardaIP.h"
 #include "config.h"
 #include "tests_guardaIP.h"
 
@@ -20,7 +19,7 @@ int main(){
 
 
     //Summary
-    printf("Tested finctionalities: %d\n", total_tests);
+    printf("\n\nTested finctionalities: %d\n", total_tests);
     printf("Successfull tests: %d\n", success_tests);
 }
 
