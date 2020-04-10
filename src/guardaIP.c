@@ -10,12 +10,6 @@
 //}
 
 
-
-int init_guardaIP(char* ip_ini, char* ip_fin){
-    int lenght = calcRange(ip_ini,ip_fin);
-    registry = malloc(lenght);
-}
-
 //Tested OK
 int calcRange(char* ip_ini, char* ip_fin){
     int ip_iniv[4];
@@ -44,18 +38,29 @@ int calcRange(char* ip_ini, char* ip_fin){
     return range;
 }
 
-int findValue(char* s){
+int r_findValue(char* s){
    int index = calcIndex(s);
    return registry[index]; //em retornarà 1 si l'IP està registrada.
 }
 
-int clear (){
-    memset(registry, 0, lenght);i
+int r_clear (){
+    memset(registry, 0, r_length);
     return 1;
 }
 
-int add (char* ip){
-    registry[clacIndex(ip)] = 1;
+int r_add (char* ip){
+    int ind  = calcIndex(ip);
+    registry[ind] = 1;
+    return ind;
+}
+
+int r_get_length(){
+    return r_length;
+}
+
+int init_guardaIP(char* ip_ini, char* ip_fin){ 
+    r_length = calcRange(ip_ini,ip_fin);
+    registry = malloc(r_length*sizeof(int));
     return 1;
 }
 

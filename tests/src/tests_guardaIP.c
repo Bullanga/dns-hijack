@@ -1,30 +1,81 @@
 #include <stdio.h>
-#include "config.h"
 #include "guardaIP.h"
 
 
-int test_guardaIP_calcRange_i_calcIndex(){
+int test_guardaIP_init_guardaIP(){
     char* ip_test_ini = "192.168.2.3";
     char* ip_test_final = "192.168.3.10";
-    //printf("la ip inicial és %s\n", IP_INI);
-    //printf("la ip final és 192.168.2.3\n"); 
-    //printf("El rang entre elles és %d\n", calcRange(IP_INI,"192.168.2.3"));
-    //printf("L'índex de %s és %d\n", ip_test, calcIndex(ip_test));
+    //Aquest rang és de 262 IPs
+    if (!init_guardaIP(ip_test_ini,ip_test_final)) return 0;
+    if (r_length != 262) return 0;
+    return 1;
+}
 
-    //cal acabar el test despres del debug.
+int test_guardaIP_r_clear(){
+    char* ip_test_ini = "192.168.2.3";
+    char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    int i;
+    for (i = 0; i < r_length; i++){
+	if (registry[i] != 0) return 0;
+    }
+    return 1;
+}
 
-    return calcRange(ip_test_ini,ip_test_final) == 262;
+int test_guardaIP_r_add(){ 
+    char* ip_test_ini = IP_INI;
+    char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    char a[]= "192.168.2.4";
+    return r_add(a) && registry[159];
+}
+
+int test_guardaIP_r_findValue(){ 
+    char* ip_test_ini = "192.168.2.3";
+    char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    char a[]= "192.168.2.4";
+    r_add(a);
+    return r_findValue(a);
 }
 
 
 int test_guardaIP(){
     int ret = 1;
-    if (test_guardaIP_calcRange_i_calcIndex()){
-	printf("    Test funcions calcRange i calcIndex de guardaIP: OK\n");
+
+    //TEST DE LA FUNCIÓ init_guuardaIP
+    if (test_guardaIP_init_guardaIP()){
+	printf("    Test funció	init_guardaIP: OK\n");
     } else {
-	printf("    Test funcions calcRange i calcIndex de guardaIP: FAIL\n");
+	printf("    Test funció init_guardaIP: FAIL\n");
 	ret = 0; //no passa el test
     }
+
+    //TEST DE LA FUNCIÓ r_clear 
+    if (test_guardaIP_r_clear()){
+	printf("    Test funció	r_clear: OK\n");
+    } else {
+	printf("    Test funció	r_clear: FAIL\n");
+	ret = 0; //no passa el test
+    }
+    
+    //TEST DE LA FUNCIÓ r_add 
+    if (test_guardaIP_r_add()){
+	printf("    Test funció	add: OK\n");
+    } else {
+	printf("    Test funció	add: FAIL\n");
+	ret = 0; //no passa el test
+    }
+    
+
+    //TEST DE LA FUNCIÓ r_findValue 
+    if (test_guardaIP_r_findValue){
+	printf("    Test funció	r_findValue: OK\n");
+    } else {
+	printf("    Test funció	r_findValue: FAIL\n");
+	ret = 0; //no passa el test
+    }
+    
     return ret;
 }
 
