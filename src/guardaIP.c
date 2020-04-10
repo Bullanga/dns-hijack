@@ -2,11 +2,21 @@
 #include <string.h>
 #include <stdio.h>
 #include "guardaIP.h"
+#define calcIndex(a) (calcRange(IP_INI,a))
+
 
 //void inicia_guardaIP(){
 //    guardaIp =(char**)malloc(3200);
 //}
 
+
+
+int init_guardaIP(char* ip_ini, char* ip_fin){
+    int lenght = calcRange(ip_ini,ip_fin);
+    registry = malloc(lenght);
+}
+
+//Tested OK
 int calcRange(char* ip_ini, char* ip_fin){
     int ip_iniv[4];
     int ip_finv[4];
@@ -35,26 +45,36 @@ int calcRange(char* ip_ini, char* ip_fin){
 }
 
 int findValue(char* s){
-    
+   int index = calcIndex(s);
+   return registry[index]; //em retornarà 1 si l'IP està registrada.
 }
 
-
-//tested OK
-void parseValues(char* valors, char result[][16]){
-    int i;
-    int c = 0;
-    int ip = 0;
-    for(i=0; i < strlen(valors); i++){	    //canvio /n per nullbytes
-	if (valors[i] == '\n'){
-	    ip++;
-	    c = 0;
-	} else {
-	    char o = valors[i];
-	    result[ip][c] = o;
-	    c++;
-	}
-    }
+int clear (){
+    memset(registry, 0, lenght);i
+    return 1;
 }
+
+int add (char* ip){
+    registry[clacIndex(ip)] = 1;
+    return 1;
+}
+
+////tested OK
+//void parseValues(char* valors, char result[][16]){
+//    int i;
+//    int c = 0;
+//    int ip = 0;
+//    for(i=0; i < strlen(valors); i++){	    //canvio /n per nullbytes
+//	if (valors[i] == '\n'){
+//	    ip++;
+//	    c = 0;
+//	} else {
+//	    char o = valors[i];
+//	    result[ip][c] = o;
+//	    c++;
+//	}
+//    }
+//}
 
 //int changeValues(char* values){
 //    int i; 
