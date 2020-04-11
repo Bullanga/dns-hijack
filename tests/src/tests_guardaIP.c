@@ -7,7 +7,7 @@ int test_guardaIP_init_guardaIP(){
     char* ip_test_final = "192.168.3.10";
     //Aquest rang és de 262 IPs
     if (!init_guardaIP(ip_test_ini,ip_test_final)) return 0;
-    if (r_length != 262) return 0;
+    if (r_length != 263) return 0;
     return 1;
 }
 
@@ -27,7 +27,7 @@ int test_guardaIP_r_add(){
     char* ip_test_final = "192.168.3.10";
     init_guardaIP(ip_test_ini, ip_test_final);
     char a[]= "192.168.2.4";
-    return r_add(a) && registry[159];
+    return r_add(a) && registry[160];
 }
 
 int test_guardaIP_r_findValue(){ 

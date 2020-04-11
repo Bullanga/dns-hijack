@@ -31,9 +31,9 @@ int calcRange(char* ip_ini, char* ip_fin){
 	ip_finv[i] = atoi(ptr_fin);
 	ptr_fin = strtok(NULL,delim);
     }
-    range = (ip_finv[0]-ip_iniv[0])*255*255*255
-	+ (ip_finv[1]-ip_iniv[1])*255*255
-	+ (ip_finv[2]-ip_iniv[2])*255
+    range = (ip_finv[0]-ip_iniv[0])*256*256*256
+	+ (ip_finv[1]-ip_iniv[1])*256*256
+	+ (ip_finv[2]-ip_iniv[2])*256
 	+ (ip_finv[3]-ip_iniv[3]);
     return range;
 }
