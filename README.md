@@ -6,4 +6,5 @@ cd dns-hijack
 make
 sudo ./dns
 
+
 ```
