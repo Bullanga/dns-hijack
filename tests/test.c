@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "config.h"
+//#include "config.h"
 #include "tests_guardaIP.h"
 
 //la gracia d'aquest fitxer es anar posant els tests de cada paquet i veure si els compleix

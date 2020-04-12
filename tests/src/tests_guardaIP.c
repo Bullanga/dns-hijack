@@ -23,8 +23,8 @@ int test_guardaIP_r_clear(){
 }
 
 int test_guardaIP_r_add(){ 
-    char* ip_test_ini = IP_INI;
-    char* ip_test_final = "192.168.3.10";
+    const char* ip_test_ini = "192.168.2.3";
+    const char* ip_test_final = "192.168.3.10";
     init_guardaIP(ip_test_ini, ip_test_final);
     char a[]= "192.168.2.4";
     return r_add(a) && registry[160];

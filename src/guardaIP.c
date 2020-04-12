@@ -2,6 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 #include "guardaIP.h"
+
+
+extern const char dhcp_ip_range[2][16] ;
+#define IP_INI dhcp_ip_range[0]
+
 #define calcIndex(a) (calcRange(IP_INI,a))
 
 
@@ -11,7 +16,7 @@
 
 
 //Tested OK
-int calcRange(char* ip_ini, char* ip_fin){
+int calcRange(const char* ip_ini,const char* ip_fin){
     int ip_iniv[4];
     int ip_finv[4];
     int range;
@@ -38,7 +43,7 @@ int calcRange(char* ip_ini, char* ip_fin){
     return range;
 }
 
-int r_findValue(char* s){
+int r_findValue(const char* s){
    int index = calcIndex(s);
    return registry[index]; //em retornarà 1 si l'IP està registrada.
 }
@@ -48,7 +53,7 @@ int r_clear (){
     return 1;
 }
 
-int r_add (char* ip){
+int r_add (const char* ip){
     int ind  = calcIndex(ip);
     registry[ind] = 1;
     return ind;
@@ -58,7 +63,7 @@ int r_get_length(){
     return r_length;
 }
 
-int init_guardaIP(char* ip_ini, char* ip_fin){ 
+int init_guardaIP(const char* ip_ini, const char* ip_fin){ 
     r_length = calcRange(ip_ini,ip_fin);
     registry = malloc(r_length*sizeof(int));
     return 1;
