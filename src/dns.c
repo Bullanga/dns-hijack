@@ -113,7 +113,7 @@ int main(int argc, char * argv[]) {
           exit(0);
         }
       } else {
-	if (!registrat())
+	if (!registrat(client_ip))
 	    if (0 == strcmp(req_domain, public_domains[0])) {
 	      generate_success_response( & Request, public_ip, comment, master_socket, client_addr, client_len);
 	    } else {

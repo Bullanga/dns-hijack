@@ -5,9 +5,8 @@
 
 
 extern const char dhcp_ip_range[2][16] ;
-#define IP_INI dhcp_ip_range[0]
 
-#define calcIndex(a) (calcRange(IP_INI,a))
+#define calcIndex(a) (calcRange(dhcp_ip_range[0],a))
 
 
 //void inicia_guardaIP(){

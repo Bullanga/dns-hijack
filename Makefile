@@ -7,10 +7,10 @@ SOURCE=src
 TESTS_DIR=tests
 T_HEADERS=$(TESTS_DIR)/include
 T_SOURCE=$(TESTS_DIR)/src
-FILES_TO_TEST=guardaIP 
+FILES_TO_TEST=
 
-all: dns_RR_t.o tests
-	gcc -o dns -I $(HEADERS) -I $(SOURCE) $(SOURCE)/dns.c dns_RR_t.o 
+all: #dns_RR_t.o 
+	gcc -o dns -I $(HEADERS)  $(SOURCE)/*c # dns_RR_t.o 
 
 clean:     # AIXO ENS HO HEM DE CURRAR
 	rm -rf *.o test dns 
@@ -18,11 +18,11 @@ clean:     # AIXO ENS HO HEM DE CURRAR
 
 #### FITXERS DEL CODI ####
 
-dns_RR_t.o: $(SOURCE)/dns_RR_t.c
-	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
+#dns_RR_t.o: $(SOURCE)/dns_RR_t.c
+#	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
 
-guardaIP.o: $(SOURCE)/guardaIP.c
-	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
+#guardaIP.o: $(SOURCE)/guardaIP.c
+#	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
 
 
 
