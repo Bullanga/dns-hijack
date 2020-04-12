@@ -10,7 +10,7 @@ T_SOURCE=$(TESTS_DIR)/src
 FILES_TO_TEST=guardaIP 
 
 all: dns_RR_t.o tests
-	gcc -o dns -I $(HEADERS) $(SOURCE)/dns.c dns_RR_t.o 
+	gcc -o dns -I $(HEADERS) -I $(SOURCE) $(SOURCE)/dns.c dns_RR_t.o 
 
 clean:     # AIXO ENS HO HEM DE CURRAR
 	rm -rf *.o test dns 

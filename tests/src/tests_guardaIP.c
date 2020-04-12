@@ -69,7 +69,7 @@ int test_guardaIP(){
     
 
     //TEST DE LA FUNCIÓ r_findValue 
-    if (test_guardaIP_r_findValue){
+    if (test_guardaIP_r_findValue()){
 	printf("    Test funció	r_findValue: OK\n");
     } else {
 	printf("    Test funció	r_findValue: FAIL\n");

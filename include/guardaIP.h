@@ -16,13 +16,13 @@ int init_guardaIP(char* ip_ini, char* ip_final);
 int r_clear();
 
 //Ip està a registry ? 1 : 0
-int r_findValue();
+int r_findValue (char* ip);
 
 //retorna la llargada
 int r_get_length();
 
 //afegeix una ip a les ips registrades. Retorna l'index al vector.
-int r_add(char* ip);
+int r_add (char* ip);
 
 #endif
 

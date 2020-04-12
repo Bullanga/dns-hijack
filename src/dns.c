@@ -9,28 +9,47 @@
 #include <stdlib.h>
 #include <arpa/inet.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "dns_RR_t.h"
 #include "config.h"
+#include "guardaIP.h"
 
-//    ###  AIXO HA D'ANAR AL .H ###
+
 int num_forks = 0;
 
 void handler(int sig) {
-  wait(NULL);
-  --num_forks;
-
+    if (sig == SIGCHLD){
+	wait(NULL);
+	--num_forks;
+    } else if (sig == SIGUSR1){
+	//Ve un nou, cal afegir-lo a l'estructura de dades
+	int fd;
+	char ip[16];
+	fd = open("vivachavez", O_RDONLY);
+	if (!read(fd,ip,16)){
+	    perror("Cannot read from named PIPE to update registered IPs. It exists?");
+	}
+	close(fd);
+	if (!r_add(ip)){
+	    perror("Could not add new ip to registered IPs");
+	}
+    } else if (sig == SIGUSR2){
+	r_clear(); //borro l'estructura
+    }
 }
 
-
-// De moment això es queda aquí però podem necessitar un refactor.
-int registrat(){
-
+//esta aqui pel més bon enteniment del codi
+int registrat(char* ip){
+    return r_findValue(ip);
 }
 
 int main(int argc, char * argv[]) {
-
+  //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
   printf("MAX_FORKS=%d\n", MAX_FORKS);
   signal(SIGCHLD, handler);
+  signal(SIGUSR1, handler);
+  signal(SIGUSR2, handler);
   int opt = 1; // TRUE
   int master_socket;
 
@@ -93,7 +112,7 @@ int main(int argc, char * argv[]) {
           exit(0);
         }
       } else {
-	if (!registrat())
+	if (!registrat(client_ip))
 	    if (0 == strcmp(req_domain, DOMAIN)) {
 	      generate_success_response( & Request, IP, COMMENT, master_socket, client_addr, client_len);
 	    } else {
