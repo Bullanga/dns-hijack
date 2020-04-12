@@ -46,7 +46,8 @@ int registrat(char* ip){
 
 int main(int argc, char * argv[]) {
   //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
-  printf("MAX_FORKS=%d\n", MAX_FORKS);
+
+  printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
   signal(SIGUSR1, handler);
   signal(SIGUSR2, handler);
@@ -99,7 +100,7 @@ int main(int argc, char * argv[]) {
     //write(1, client_ip, strlen(client_ip));
 
     if (RequestLen >= 12) {
-      if (num_forks < MAX_FORKS) {
+      if (num_forks < max_forks) {
         num_forks++;
         int p = fork();
         if (p < 0) {
@@ -108,13 +109,13 @@ int main(int argc, char * argv[]) {
         }
         if (p == 0) {
 
-          generate_success_response( & Request, IP, COMMENT, master_socket, client_addr, client_len);
+          generate_success_response( & Request, public_ip, comment, master_socket, client_addr, client_len);
           exit(0);
         }
       } else {
-	if (!registrat(client_ip))
-	    if (0 == strcmp(req_domain, DOMAIN)) {
-	      generate_success_response( & Request, IP, COMMENT, master_socket, client_addr, client_len);
+	if (!registrat())
+	    if (0 == strcmp(req_domain, public_domains[0])) {
+	      generate_success_response( & Request, public_ip, comment, master_socket, client_addr, client_len);
 	    } else {
 	      generate_failure_response( & Request, master_socket, client_addr, client_len);
 	    }

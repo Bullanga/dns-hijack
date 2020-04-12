@@ -4,7 +4,7 @@
 #include "dns_RR_t.h"
 
 
-void generate_success_response(DNS_RR *Request, char *ip, char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_success_response(DNS_RR *Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
       
       DNS_RR Reply;
       // tractem el packet; generem el packet de resposta
