@@ -39,10 +39,6 @@ void handler(int sig) {
     }
 }
 
-//esta aqui pel més bon enteniment del codi
-int registrat(char* ip){
-    return r_findValue(ip);
-}
 
 int main(int argc, char * argv[]) {
   //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
@@ -108,17 +104,13 @@ int main(int argc, char * argv[]) {
           exit(EXIT_FAILURE);
         }
         if (p == 0) {
-
+	// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
           generate_success_response( & Request, public_ip, comment, master_socket, client_addr, client_len);
           exit(0);
         }
       } else {
-	if (!registrat(client_ip))
-	    if (0 == strcmp(req_domain, public_domains[0])) {
-	      generate_success_response( & Request, public_ip, comment, master_socket, client_addr, client_len);
-	    } else {
-	      generate_failure_response( & Request, master_socket, client_addr, client_len);
-	    }
+	  if (!process(client_ip, req_domain, & Request, public_ip, comment, master_socket, client_addr, client_len))   //processing ip request
+	      perror("Error at processing DNS response");
       }
 
     }
