@@ -1,7 +1,6 @@
 /* guardaIP.h*/
 #ifndef guardaIP_H
 #define guardaIP_H 
-//#include "config.h"
 
 int r_length;
 int* registry;

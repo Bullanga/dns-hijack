@@ -4,20 +4,20 @@
 #include "dns_RR_t.h"
 
 
-void generate_success_response(DNS_RR *Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_success_response(DNS_RR Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
       
       DNS_RR Reply;
       // tractem el packet; generem el packet de resposta
       memset(&Reply,0,sizeof(Reply));
       
-      Reply.ID = Request->ID;
+      Reply.ID = Request.ID;
       // Assumim error i posem el flac de authoritive reply
       Reply.Rcode = RCODE_SERVER_ERROR;
       Reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int ReplyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (Request->Flags & FLAG_REPLY) == 0) 
+      if( (Request.Flags & FLAG_REPLY) == 0) 
       {
 
 //        write(1,"ENTRO!\n",7);
@@ -29,10 +29,10 @@ void generate_success_response(DNS_RR *Request, const char *ip, const char *comm
         
 
         // store hostname
-        Reply.Data[len] = (int) Request->Data[len];
+        Reply.Data[len] = (int) Request.Data[len];
         ++len;
-        memcpy(Reply.Data+len,&Request->Data[len],strlen(&Request->Data[len]));
-        len += strlen(&Request->Data[len]);
+        memcpy(Reply.Data+len,&Request.Data[len],strlen(&Request.Data[len]));
+        len += strlen(&Request.Data[len]);
         Reply.Data[len++];
         // set upper byte of TYPE
         Reply.Data[len++] = (TYPE_A/256)&0xff;
@@ -102,21 +102,21 @@ void generate_success_response(DNS_RR *Request, const char *ip, const char *comm
 
 
 
-void generate_failure_response(DNS_RR *Request,  int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_failure_response(DNS_RR Request,  int master_socket, const struct sockaddr client_addr, int client_len){
 
 
       DNS_RR Reply;
       // tractem el packet; generem el packet de resposta
       memset(&Reply,0,sizeof(Reply));
       
-      Reply.ID = Request->ID;
+      Reply.ID = Request.ID;
       // Assumim error i posem el flac de authoritive reply
       Reply.Rcode = RCODE_SERVER_ERROR;
       Reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int ReplyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (Request->Flags & FLAG_REPLY) == 0) 
+      if( (Request.Flags & FLAG_REPLY) == 0) 
       {
 
         int len = 0;
