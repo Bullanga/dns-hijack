@@ -2,7 +2,7 @@
 #define __CHECKS_H
 #include <string.h>
 #include "guardaIP.h"
-#include "config.h"
+#include "wrapp.h"
 
 
 //check si la ip està registrada

@@ -7,10 +7,10 @@ SOURCE=src
 TESTS_DIR=tests
 T_HEADERS=$(TESTS_DIR)/include
 T_SOURCE=$(TESTS_DIR)/src
-FILES_TO_TEST=
+FILES_TO_TEST= guardaIP
 
-all: #dns_RR_t.o 
-	gcc -o dns -I $(HEADERS)  $(SOURCE)/*c # dns_RR_t.o 
+all: dns_RR_t.o process.o checks.o guardaIP.o
+	gcc -o dns -I $(HEADERS)  $(SOURCE)/dns.c dns_RR_t.o process.o checks.o  guardaIP.o
 
 clean:     # AIXO ENS HO HEM DE CURRAR
 	rm -rf *.o test dns 
@@ -18,18 +18,23 @@ clean:     # AIXO ENS HO HEM DE CURRAR
 
 #### FITXERS DEL CODI ####
 
-#dns_RR_t.o: $(SOURCE)/dns_RR_t.c
-#	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
+dns_RR_t.o: $(SOURCE)/dns_RR_t.c
+	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
 
-#guardaIP.o: $(SOURCE)/guardaIP.c
-#	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
+guardaIP.o: $(SOURCE)/guardaIP.c
+	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
 
 
+process.o: $(SOURCE)/process.c
+	gcc -c $(SOURCE)/process.c  -I $(HEADERS)
+
+checks.o: $(SOURCE)/checks.c
+	gcc -c $(SOURCE)/checks.c -I $(HEADERS)
 
 #### TESTS ####
 ## CAL TENIR EN COMPTE QUE CAL HAVER AFEGIT EL QUE ES VOL TESTEJAR A LA VAR FILES_TO_TEST ###
 
-tests: all_tests files_to_test
+tests: all_tests
 	gcc -o test $(TESTS_DIR)/test.c *.o -I $(HEADERS) -I $(T_HEADERS) -I $(T_SOURCE) -I $(SOURCE)   
 	./test
 

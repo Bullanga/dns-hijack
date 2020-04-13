@@ -13,10 +13,13 @@
 #include <fcntl.h>
 #include "dns_RR_t.h"
 #include "config.h"
+#include "process.h"
 #include "guardaIP.h"
 
 
 int num_forks = 0;
+int public_domains_num = 0;
+int private_domains_num = 0;
 
 void handler(int sig) {
     if (sig == SIGCHLD){
@@ -55,7 +58,8 @@ int main(int argc, char * argv[]) {
 
   DNS_RR Request, Reply;
   int RequestLen, ReplyLen;
-
+	public_domains_num = sizeof(public_domains);
+	private_domains_num = sizeof(private_domains);
   char req_domain[256];
   char client_ip[20];
 
