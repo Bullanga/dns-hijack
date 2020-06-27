@@ -2,49 +2,47 @@
 ########### Makefile ###########
 ################################
 
-HEADERS=include
-SOURCE=src
-TESTS_DIR=tests
-T_HEADERS=$(TESTS_DIR)/include
-T_SOURCE=$(TESTS_DIR)/src
-FILES_TO_TEST= guardaIP
+SRC_DIR=src
+INCLUDE=$(SRC_DIR)/include
+#TESTS_DIR=tests
+#T_INCLUDE=$(TESTS_DIR)/include
+#T_SRC_DIR=$(TESTS_DIR)/src
+#FILES_TO_TEST= guardaIP
 
-all: dns_RR_t.o process.o checks.o guardaIP.o
-	gcc -o dns -I $(HEADERS)  $(SOURCE)/dns.c dns_RR_t.o process.o checks.o  guardaIP.o
+SRC= dns.c dns_RR_t.c process.c	guardaIP.c checks.c	 
 
-clean:     # AIXO ENS HO HEM DE CURRAR
-	rm -rf *.o test dns 
+OBJ=${SRC:.c=.o}
 
+
+
+CFLAGS= -Wall -ggdb -I $(INCLUDE)
+CC=gcc
 
 #### FITXERS DEL CODI ####
+all: dns
 
-dns_RR_t.o: $(SOURCE)/dns_RR_t.c
-	gcc -c $(SOURCE)/dns_RR_t.c -I $(HEADERS)
+dns: ${OBJ}	
+	$(CC) $(CFLAGS) -o dns $^
 
-guardaIP.o: $(SOURCE)/guardaIP.c
-	gcc -c $(SOURCE)/guardaIP.c -I $(HEADERS)
-
-
-process.o: $(SOURCE)/process.c
-	gcc -c $(SOURCE)/process.c  -I $(HEADERS)
-
-checks.o: $(SOURCE)/checks.c
-	gcc -c $(SOURCE)/checks.c -I $(HEADERS)
+%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) -c $<
 
 #### TESTS ####
 ## CAL TENIR EN COMPTE QUE CAL HAVER AFEGIT EL QUE ES VOL TESTEJAR A LA VAR FILES_TO_TEST ###
 
 tests: all_tests
-	gcc -o test $(TESTS_DIR)/test.c *.o -I $(HEADERS) -I $(T_HEADERS) -I $(T_SOURCE) -I $(SOURCE)   
+	$(CC) -o test $(TESTS_DIR)/test.c *.o -I $(INCLUDE) -I $(T_INCLUDE) -I $(T_SRC_DIR) -I $(SRC_DIR)   
 	./test
 
 files_to_test:
 	for i in $(FILES_TO_TEST); do \
-	    gcc -g -I $(HEADERS) -c  $(SOURCE)/$$i.c; \
+	    $(CC) -g -I $(INCLUDE) -c  $(SRC_DIR)/$$i.c; \
 	    done
 
 all_tests: 
-	gcc  -g -c $(T_SOURCE)/*.c -I $(HEADERS) -I $(SOURCE) -I $(T_HEADERS)
+	$(CC)  -g -c $(T_SRC_DIR)/*.c -I $(INCLUDE) -I $(SRC_DIR) -I $(T_INCLUDE)
 
 
 
+clean:     # AIXO ENS HO HEM DE CURRAR
+	rm -rf *.o test dns $(INCLUDE)/*.gch

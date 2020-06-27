@@ -11,10 +11,11 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "dns_types.h"
 #include "dns_RR_t.h"
 #include "config.h"
 #include "process.h"
-#include "guardaIP.h"
+//#include "guardaIP.h"
 
 
 int num_forks = 0;

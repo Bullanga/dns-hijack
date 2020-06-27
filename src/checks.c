@@ -1,4 +1,5 @@
 #include "checks.h"
+#include "wrapp.h"
 
 //check si la ip està registrada
 int check_if_registered(char* ip){

@@ -1,5 +1,7 @@
+#include <sys/socket.h>
+#include "dns_types.h"
 #include "process.h"
-
+#include "wrapp.h"
 
 void make_response(char* client_ip, char* req_domain, DNS_RR Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len ){
     if (check_if_private_domain(req_domain)){

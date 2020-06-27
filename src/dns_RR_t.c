@@ -1,7 +1,9 @@
 #include <stdlib.h> 
 #include <sys/socket.h>
 #include <errno.h>
+#include "dns_types.h"
 #include "dns_RR_t.h"
+
 
 
 void generate_success_response(DNS_RR Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
