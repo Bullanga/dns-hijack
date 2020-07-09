@@ -7,4 +7,7 @@
 	int   ipv4_list_add(void *ipv4_list, char *ip);
 	int   ipv4_list_contains(void  *ipv4_list, char *ip);
 
+
+    void ipv4_list_debug(void *ipv4_list);
+
 #endif
