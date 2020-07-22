@@ -137,7 +137,7 @@ void generate_failure_response(DNS_RR Request,  int master_socket, const struct 
 }
 void parse_requested_domain(char *target, char *data) {
 	
-	memset(target,0,(strlen(target)));
+	memset(target,0,16);
 	int i = 1;
 	int dot = (int) data[0];
 	while( dot > 0) {
@@ -154,7 +154,7 @@ void parse_requested_domain(char *target, char *data) {
 void parse_client_ip(char *target, struct sockaddr *client) {
 
 	
-	memset(target,0,(strlen(target)));
+	memset(target,0,16);
 	char *ip = inet_ntoa(((struct sockaddr_in *)client)->sin_addr);
 	memcpy(target,ip,strlen(ip));
 
