@@ -5,9 +5,9 @@
 
 void make_response(char* client_ip, char* req_domain, DNS_RR Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len ){
     if (check_if_private_domain(req_domain)){
-	generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
+			generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
     } else {
-	generate_failure_response( Request, master_socket, client_addr, client_len);
+			generate_failure_response( Request, master_socket, client_addr, client_len);
 	
     }
 }
