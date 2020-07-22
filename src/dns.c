@@ -19,8 +19,6 @@
 
 
 int num_forks = 0;
-int public_domains_num = 0;
-int private_domains_num = 0;
 
 void handler(int sig) {
     if (sig == SIGCHLD){
@@ -59,8 +57,6 @@ int main(int argc, char * argv[]) {
 
   DNS_RR Request, Reply;
   int RequestLen, ReplyLen;
-	public_domains_num = sizeof(public_domains);
-	private_domains_num = sizeof(private_domains);
   char req_domain[256];
   char client_ip[20];
 
@@ -89,6 +85,9 @@ int main(int argc, char * argv[]) {
     exit(EXIT_FAILURE);
   }
   puts("Socket listening on 0.0.0.0:53");
+	
+
+	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
 
   while (1) {
     int client_len = sizeof(client_addr);
