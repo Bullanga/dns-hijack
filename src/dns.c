@@ -49,13 +49,6 @@ int main(int argc, char * argv[]) {
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
   
-  // Inite stuff per a preparar l'actualitzacio del registre...
-  signal(SIGUSR1, handler);
-  signal(SIGUSR2, handler);
-  FILE *fp;
-  fp = fopen("/run/fakeDNS.pid", "w+");
-  fprintf(fp, "%d", getpid());
-  fclose(fp);
 
   int opt = 1; // TRUE
   int master_socket;
