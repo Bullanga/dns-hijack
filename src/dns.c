@@ -26,16 +26,17 @@ void handler(int sig) {
 	--num_forks;
     } else if (sig == SIGUSR1){
 	//Ve un nou, cal afegir-lo a l'estructura de dades
-	int fd;
-	char ip[16];
-	fd = open("vivachavez", O_RDONLY);
-	if (!read(fd,ip,16)){
-	    perror("Cannot read from named PIPE to update registered IPs. It exists?");
-	}
-	close(fd);
-	if (!r_add(ip)){
-	    perror("Could not add new ip to registered IPs");
-	}
+//	int fd;
+//	char ip[16];
+//	fd = open("vivachavez", O_RDONLY);
+//	if (!read(fd,ip,16)){
+//	    perror("Cannot read from named PIPE to update registered IPs. It exists?");
+//	}
+//	close(fd);
+//	if (!r_add(ip)){
+//	    perror("Could not add new ip to registered IPs");
+//	}
+	printf("ouuu yea, THE WEB SERVER SENDED TO ME A SIGNAL\n");	
     } else if (sig == SIGUSR2){
 	r_clear(); //borro l'estructura
     }
@@ -47,8 +48,15 @@ int main(int argc, char * argv[]) {
 
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
+  
+  // Inite stuff per a preparar l'actualitzacio del registre...
   signal(SIGUSR1, handler);
   signal(SIGUSR2, handler);
+  FILE *fp;
+  fp = fopen("/run/fakeDNS.pid", "w+");
+  fprintf(fp, "%d", getpid());
+  fclose(fp);
+
   int opt = 1; // TRUE
   int master_socket;
 
