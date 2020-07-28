@@ -13,6 +13,7 @@
 // handler              -> add content into handler function of dns.c
 // captive_portal_init  -> add without modifications
 // main                 -> add to main of dns.c the call to captive_portal_init
+
 #define _GNU_SOURCE
 
 #include <stdio.h>
@@ -33,8 +34,15 @@
 
 char* getLastIPRegistered() {
     char *ret_val;
-    // Creates a postgresql connection with hardcoded credentials
-    PGconn *conn = PQconnectdb("user=u_dks password=YjBkNDcwNDdmZDE0YzM3MzEyMTY2YmUz dbname=db_dks");
+    char credentials[strlen("user= password= dbname=") 
+                    + strlen(db_name) 
+                    + strlen(db_password) 
+                    + strlen(db_name)
+                    + 1];
+
+    // Creates a postgresql connection with credentials from config.h
+    sprintf(credentials, "user=%s password=%s dbname=%s", db_user, db_password, db_name);
+    PGconn *conn = PQconnectdb(credentials);
 
     // Checks db connection
     if (PQstatus(conn) == CONNECTION_BAD) {
@@ -76,9 +84,9 @@ void handler(int sig) {
     // SIGUSR1 -> New ip registered and needs to be added
     if (sig == SIGUSR1){
         int pid;
-	char *stack;
-	char *stackTop;
-	stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
+        char *stack;
+        char *stackTop;
+        stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
         if (stack == MAP_FAILED)
             exit(EXIT_FAILURE);
