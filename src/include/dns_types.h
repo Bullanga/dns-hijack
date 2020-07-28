@@ -131,4 +131,12 @@ typedef enum RCODE RCODE;
 
 #define CLASS_IN 0x01
 
+
+typedef struct {
+	const char *domain;
+	const uint8_t type;
+	const uint8_t auth;
+	const char *ip;
+} RR;
+
 #endif
