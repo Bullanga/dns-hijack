@@ -37,4 +37,12 @@ const unsigned int max_forks =  0;
 const char dhcp_ip_range[2][16] = {"127.0.0.0", "127.0.0.2"};
 
 #define IP_INI dhcp_ip_range[0]
+
+const RR records[] = {
+/*  domain            type  private  ip           */
+{   "duniakato.dks",  1,    0,       "127.0.0.1"  },
+{   "wikipedia.dks",  1,    1,       "127.0.0.1"  },
+
+};
+
 #endif

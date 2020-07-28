@@ -109,11 +109,11 @@ int main(int argc, char * argv[]) {
         }
         if (p == 0) {
 	// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
-          generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
+          //generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
           exit(0);
         }
       } else {
-	  if (!process(client_ip, req_domain, Request, public_ip, comment, master_socket, client_addr, client_len))   //processing ip request
+	  if (!process(client_ip, req_domain, Request, comment, master_socket, client_addr, client_len))   //processing ip request
 	      perror("Error at processing DNS response");
       }
 

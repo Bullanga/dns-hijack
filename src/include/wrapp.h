@@ -2,7 +2,7 @@
 #define __WRAPP_H
 // Configutation file and variables
 
-
+#include "dns_types.h"
 
 
 extern const unsigned int use_inite;
@@ -23,4 +23,7 @@ extern const unsigned int max_forks;
 extern const char dhcp_ip_range[2][16];
 
 #define IP_INI dhcp_ip_range[0]
+
+extern const RR *records;
+
 #endif

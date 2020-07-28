@@ -134,8 +134,8 @@ typedef enum RCODE RCODE;
 
 typedef struct {
 	const char *domain;
-	const uint8_t type;
-	const uint8_t auth;
+	const int type;
+	const int privat;
 	const char *ip;
 } RR;
 
