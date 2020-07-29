@@ -1,5 +1,5 @@
-#ifndef __WRAPP_H
-#define __WRAPP_H
+#ifndef __VARIABLES_H
+#define __VARIABLES_H
 // Configutation file and variables
 
 #include "dns_types.h"
