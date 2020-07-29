@@ -18,7 +18,7 @@
 #include <libpq-fe.h>
 
 #include "dns_types.h"
-#include "dns_RR_t.h"
+#include "utils.h"
 #include "config.h"
 #include "utils.h"
 #include "guardaIP.h"

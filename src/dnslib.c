@@ -1,8 +1,12 @@
-#include <stdlib.h> 
-#include <sys/socket.h>
+#include <arpa/inet.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h> 
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 #include "dns_types.h"
-#include "dns_RR_t.h"
+#include "dnslib.h"
 
 
 
@@ -35,7 +39,7 @@ void generate_success_response(Packet request, const char *ip, const char *comme
         ++len;
         memcpy(reply.Data+len,&request.Data[len],strlen(&request.Data[len]));
         len += strlen(&request.Data[len]);
-        reply.Data[len++];
+        len++;
         // set upper byte of TYPE
         reply.Data[len++] = (TYPE_A/256)&0xff;
         // set lower byte of TYPE
@@ -121,7 +125,6 @@ void generate_failure_response(Packet request,  int master_socket, const struct 
       if( (request.Flags & FLAG_REPLY) == 0) 
       {
 
-        int len = 0;
         reply.Rcode = RCODE_NXDOMAIN;
         reply.Acount = htons(0); // 0 respostes  
 
@@ -151,7 +154,7 @@ void parse_requested_domain(char *target, char *data) {
 
 }
 
-void parse_client_ip(char *target, struct sockaddr *client) {
+void parse_client_ip(char *target, const struct sockaddr *client) {
 
 	
 	memset(target,0,16);

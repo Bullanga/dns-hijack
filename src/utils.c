@@ -1,7 +1,8 @@
 #include <sys/socket.h>
+#include <string.h>
 #include "dns_types.h"
-#include "wrapp.h"
-#include "dns_RR_t.h"
+#include "variables.h"
+#include "dnslib.h"
 #include "guardaIP.h"
 #include "utils.h"
 
