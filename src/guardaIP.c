@@ -64,7 +64,7 @@ int r_get_length(){
 
 int init_guardaIP(const char* ip_ini, const char* ip_fin){ 
     r_length = calcRange(ip_ini,ip_fin);
-    registry = malloc(r_length*sizeof(int));
+    *registry = malloc(r_length*sizeof(int));
     return 1;
 }
 

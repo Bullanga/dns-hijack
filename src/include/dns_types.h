@@ -1,6 +1,7 @@
 #ifndef _TYPES_H
 #define _TYPES_H
 #include <stdlib.h>
+#include <stdint.h>
 /*
                         HEADER QUERY / RESPONSE DNS
       
@@ -87,14 +88,14 @@ typedef enum TYPE TYPE;
 
 struct DNS_RR /* request/reply */
   {
-  u_int16_t ID; 	/* session serial number */
-  u_int8_t Flags; 	/* see FLAGs */
-  u_int8_t Rcode; 	/* see RCODE */
-  u_int16_t Qcount; 	/* # entries in the question section */
-  u_int16_t Acount; 	/* # entries in the answer section */
-  u_int16_t NScount; 	/* # name server records
+  uint16_t ID; 	/* session serial number */
+  uint8_t Flags; 	/* see FLAGs */
+  uint8_t Rcode; 	/* see RCODE */
+  uint16_t Qcount; 	/* # entries in the question section */
+  uint16_t Acount; 	/* # entries in the answer section */
+  uint16_t NScount; 	/* # name server records
 			in authority section */
-  u_int16_t ARcount; 	/* # resource records
+  uint16_t ARcount; 	/* # resource records
 			in additional records section */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */

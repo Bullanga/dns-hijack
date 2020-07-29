@@ -2,8 +2,8 @@
 #ifndef guardaIP_H
 #define guardaIP_H 
 
-int r_length;
-int* registry;
+extern int r_length;
+extern int* registry;
 
 //Es detallen les funcions de l'interficie a continuació
 
