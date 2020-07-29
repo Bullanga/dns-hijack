@@ -9,7 +9,7 @@
 //
 // --- TO ADD IN dns.c: ---
 // getLastIPRegistered  -> add without modifications
-// ip_list_update       -> add without modifications
+// ipListUpdate       -> add without modifications
 // handler              -> add content into handler function of dns.c
 // captive_portal_init  -> add without modifications
 // main                 -> add to main of dns.c the call to captive_portal_init
@@ -24,7 +24,7 @@
 #include <errno.h>
 #include <sched.h>
 #include <sys/mman.h>
-#include <libpq-fe.h>
+#include <postgresql/libpq-fe.h>
 #include <stdlib.h>
 
 #include "guardaIP.h"
@@ -70,7 +70,7 @@ char* getLastIPRegistered() {
     return ret_val;
 }
 
-int ip_list_update() {
+int ipListUpdate() {
     // Connects to db and gathers the latest ip registered
     char* ip_to_add = getLastIPRegistered();
     
@@ -93,7 +93,7 @@ void handler(int sig) {
 
         stackTop = stack + STACK_SIZE;
 
-        pid = clone(ip_list_update, stackTop, CLONE_VM, NULL);
+        pid = clone(ipListUpdate, stackTop, CLONE_VM, NULL);
         if (pid < 0) {
 		exit(EXIT_FAILURE);
         }
