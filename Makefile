@@ -23,7 +23,7 @@ T_SRC_DIR=$(TESTS_DIR)/src
 ## Fitxers als que aplicar test
 FILES_TO_TEST= guardaIP
 
-SRC= dns.c dns_RR_t.c process.c	guardaIP.c checks.c	 ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT !!!
+SRC= dns.c dns_RR_t.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT !!!
 
 OBJ=${SRC:.c=.o}
 

@@ -20,7 +20,7 @@
 #include "dns_types.h"
 #include "dns_RR_t.h"
 #include "config.h"
-#include "process.h"
+#include "utils.h"
 #include "guardaIP.h"
 
 // Captive portal definition
@@ -140,10 +140,8 @@ int main(int argc, char * argv[]) {
   struct sockaddr_in address; // address del servidor
   struct sockaddr client_addr;
 
-  DNS_RR Request, Reply;
-  int RequestLen, ReplyLen;
-  char req_domain[256];
-  char client_ip[20];
+  DNS_RR Request;
+  int RequestLen;
 
   // creem el master socket
   if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -174,14 +172,11 @@ int main(int argc, char * argv[]) {
 
 
   while (1) {
-    int client_len = sizeof(client_addr);
-    RequestLen = recvfrom(master_socket, & Request, sizeof(Request), 0, & client_addr, & client_len);
+
+    socklen_t client_len = sizeof(client_addr);
+    RequestLen = recvfrom(master_socket, & Request, sizeof(Request), 0, & client_addr, &client_len);
     // considerem tamany minim del paacket 12 bytes
 
-    parse_requested_domain(req_domain, Request.Data);
-    // write(1, req_domain, strlen(req_domain));
-    parse_client_ip(client_ip, & client_addr);
-    //write(1, client_ip, strlen(client_ip));
 
     if (RequestLen >= 12) {
       if (num_forks < max_forks) {
@@ -192,14 +187,15 @@ int main(int argc, char * argv[]) {
           exit(EXIT_FAILURE);
         }
         if (p == 0) {
-	// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
+					// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
           //generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
           exit(0);
         }
       } else {
-	  if (!process(client_ip, req_domain, Request, comment, master_socket, client_addr, client_len))   //processing ip request
-	      perror("Error at processing DNS response");
-      }
+
+	  		process(Request,  master_socket, client_addr, client_len);
+      
+			}
 
     }
 
