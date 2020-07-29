@@ -29,14 +29,14 @@ OBJ=${SRC:.c=.o}
 
 
 
-CFLAGS= -Wall -ggdb -I $(INCLUDE)
+CFLAGS= -Wall -std=c99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
 CC=gcc
 
 #### FITXERS DEL CODI ####
 all: dns
 
 dns: ${OBJ}	
-	$(CC) $(CFLAGS) -o dns $^
+	$(CC) $(CFLAGS) -o dns $^ -lpq
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $<
