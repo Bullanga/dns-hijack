@@ -1,54 +1,139 @@
-#include <sys/time.h>
+#define _GNU_SOURCE
+
 #include <signal.h>
 #include <string.h>
-#include <sys/types.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
-#include <sys/wait.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <fcntl.h>
+#include <sched.h>
+#include <libpq-fe.h>
+
 #include "dns_types.h"
 #include "dns_RR_t.h"
 #include "config.h"
 #include "process.h"
-//#include "guardaIP.h"
+#include "guardaIP.h"
 
+// Captive portal definition
+#define STACK_SIZE (1024 * 1024)    /* Stack size for cloned child */
 
 int num_forks = 0;
 
-void handler(int sig) {
-    if (sig == SIGCHLD){
-	wait(NULL);
-	--num_forks;
-    } else if (sig == SIGUSR1){
-	//Ve un nou, cal afegir-lo a l'estructura de dades
-	int fd;
-	char ip[16];
-	fd = open("vivachavez", O_RDONLY);
-	if (!read(fd,ip,16)){
-	    perror("Cannot read from named PIPE to update registered IPs. It exists?");
-	}
-	close(fd);
-	if (!r_add(ip)){
-	    perror("Could not add new ip to registered IPs");
-	}
-    } else if (sig == SIGUSR2){
-	r_clear(); //borro l'estructura
-    }
+// Captive portal 
+// Return, in string human readable format, the most resent ip registered to a postgresql database
+char* getLastIPRegistered() {
+  char *ret_val;
+  char credentials[strlen("user= password= dbname=") 
+                  + strlen(db_name) 
+                  + strlen(db_password) 
+                  + strlen(db_name)
+                  + 1];
+
+  // Creates a postgresql connection with credentials from config.h
+  sprintf(credentials, "user=%s password=%s dbname=%s", db_user, db_password, db_name);
+  PGconn *conn = PQconnectdb(credentials);
+
+  // Checks db connection
+  if (PQstatus(conn) == CONNECTION_BAD) {
+      
+    fprintf(stderr, "Connection to database failed: %s\n",
+        PQerrorMessage(conn));
+        
+    PQfinish(conn);
+    exit(1);
+  }
+
+  // Execute query
+  PGresult *res = PQexec(conn, "select ip from portal_registre order by registrat desc limit 1");
+  
+  // Check content of response and stores it in return value
+  if (PQresultStatus(res) == PGRES_TUPLES_OK) {
+    ret_val = PQgetvalue(res, 0, 0);
+  }
+
+  // Clean and finish db connection
+  PQclear(res);
+  PQfinish(conn);
+
+  return ret_val;
 }
 
+// Captive portal
+// Returns 1 if ip updated sucessfully, 0 otherwise
+int ipListUpdate() {
+  // Connects to db and gathers the latest ip registered
+  char* ip_to_add = getLastIPRegistered();
+  
+  // Adds latest ip registered with guardaIP utilitis
+  if ( ip_to_add != NULL) 
+    r_add(ip_to_add);
+
+  return (ip_to_add == NULL);
+}
+
+void handler(int sig) {
+  if (sig == SIGCHLD){
+      wait(NULL);
+      --num_forks;
+  } 
+  // Captive portal
+  // SIGUSR1 -> New ip registered and needs to be added
+  else if (sig == SIGUSR1){
+    int   pid;
+    char  *stack;
+    char  *stackTop;
+    stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
+                    MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
+
+    if (stack == MAP_FAILED)
+      exit(EXIT_FAILURE);
+
+    stackTop = stack + STACK_SIZE;
+
+    pid = clone(ipListUpdate, stackTop, CLONE_VM, NULL);
+    if (pid < 0) 
+      exit(EXIT_FAILURE);
+  } 
+  // Captive portal
+  // SIGUSR2 -> Ip list must be cleared
+  else if (sig == SIGUSR2){
+    r_clear(); 
+  }
+}
+
+// Captive portal setup
+void captive_portal_init() {
+  // SIGUSR1 -> New ip registered and needs to be added
+  // SIGUSR2 -> Ip list must be cleared
+  signal(SIGUSR1, handler);
+  signal(SIGUSR2, handler);
+
+  // Writing pid to /run/fakeDNS.pid
+  FILE *fp;
+  fp = fopen("/run/fakeDNS.pid", "w+");
+  fprintf(fp, "%d", getpid());
+  fclose(fp);
+}
 
 int main(int argc, char * argv[]) {
   //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
+	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
 
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
-  signal(SIGUSR1, handler);
-  signal(SIGUSR2, handler);
+
+  // Captive portal setup. 
+  captive_portal_init();
+
   int opt = 1; // TRUE
   int master_socket;
 
@@ -87,7 +172,6 @@ int main(int argc, char * argv[]) {
   puts("Socket listening on 0.0.0.0:53");
 	
 
-	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
 
   while (1) {
     int client_len = sizeof(client_addr);
