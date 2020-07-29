@@ -86,7 +86,7 @@ enum TYPE
 typedef enum TYPE TYPE;
 
 
-struct DNS_RR /* request/reply */
+struct Packet /* request/reply */
   {
   uint16_t ID; 	/* session serial number */
   uint8_t Flags; 	/* see FLAGs */
@@ -99,9 +99,9 @@ struct DNS_RR /* request/reply */
 			in additional records section */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
-  unsigned char Data[500]; 	/* data */
+  char Data[500]; 	/* data */
   };
-typedef struct DNS_RR DNS_RR;
+typedef struct Packet Packet;
 
 /*** Flags for DNS header.  OR these together. ***/
 #define FLAG_REPLY 0x80     /* is this a query or reply?

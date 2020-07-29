@@ -6,94 +6,94 @@
 
 
 
-void generate_success_response(DNS_RR Request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_success_response(Packet request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
       
-      DNS_RR Reply;
+      Packet reply;
       // tractem el packet; generem el packet de resposta
-      memset(&Reply,0,sizeof(Reply));
+      memset(&reply,0,sizeof(reply));
       
-      Reply.ID = Request.ID;
+      reply.ID = request.ID;
       // Assumim error i posem el flac de authoritive reply
-      Reply.Rcode = RCODE_SERVER_ERROR;
-      Reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
+      reply.Rcode = RCODE_SERVER_ERROR;
+      reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
-      int ReplyLen = 12;
+      int replyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (Request.Flags & FLAG_REPLY) == 0) 
+      if( (request.Flags & FLAG_REPLY) == 0) 
       {
 
 //        write(1,"ENTRO!\n",7);
         int len = 0;
-        Reply.Rcode = RCODE_NO_ERROR;
-        Reply.Acount = htons(2); // 2 respostes: hostname and TXT 
+        reply.Rcode = RCODE_NO_ERROR;
+        reply.Acount = htons(2); // 2 respostes: hostname and TXT 
 
         // RESPOSTA 1: hostname
         
 
         // store hostname
-        Reply.Data[len] = (int) Request.Data[len];
+        reply.Data[len] = (int) request.Data[len];
         ++len;
-        memcpy(Reply.Data+len,&Request.Data[len],strlen(&Request.Data[len]));
-        len += strlen(&Request.Data[len]);
-        Reply.Data[len++];
+        memcpy(reply.Data+len,&request.Data[len],strlen(&request.Data[len]));
+        len += strlen(&request.Data[len]);
+        reply.Data[len++];
         // set upper byte of TYPE
-        Reply.Data[len++] = (TYPE_A/256)&0xff;
+        reply.Data[len++] = (TYPE_A/256)&0xff;
         // set lower byte of TYPE
-        Reply.Data[len++] = (TYPE_A)&0xff;
+        reply.Data[len++] = (TYPE_A)&0xff;
 
         // set CLASS
-        Reply.Data[len++] = (CLASS_IN/256)&0xff;
-        Reply.Data[len++] = (CLASS_IN)&0xff;
+        reply.Data[len++] = (CLASS_IN/256)&0xff;
+        reply.Data[len++] = (CLASS_IN)&0xff;
     
         // set TTL (4 bytes) a 10 s
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 10;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 10;
   
         // set data length
-        Reply.Data[len++] =0;
-        Reply.Data[len++] =4;
+        reply.Data[len++] =0;
+        reply.Data[len++] =4;
        
 
         int ipAddr = ntohl(inet_addr(ip));
-        Reply.Data[len++] = (ipAddr >> 24) & 0xff;
-        Reply.Data[len++] = (ipAddr >> 16) & 0xff;
-        Reply.Data[len++] = (ipAddr >> 8) & 0xff;
-        Reply.Data[len++] = (ipAddr) & 0xff;
+        reply.Data[len++] = (ipAddr >> 24) & 0xff;
+        reply.Data[len++] = (ipAddr >> 16) & 0xff;
+        reply.Data[len++] = (ipAddr >> 8) & 0xff;
+        reply.Data[len++] = (ipAddr) & 0xff;
       
 
         // Resposta 2: hostname i TXT
-        Reply.Data[len++] = 0xc0; // punter
-        Reply.Data[len++] = 0x0c; // punter al nom (inici de data)
+        reply.Data[len++] = 0xc0; // punter
+        reply.Data[len++] = 0x0c; // punter al nom (inici de data)
         
         // set upper byte of TYPE
-        Reply.Data[len++] = (TYPE_TXT/256)&0xff;
+        reply.Data[len++] = (TYPE_TXT/256)&0xff;
         // set lower byte of TYPE
-        Reply.Data[len++] = (TYPE_TXT)&0xff;
+        reply.Data[len++] = (TYPE_TXT)&0xff;
 
         // set CLASS
-        Reply.Data[len++] = (CLASS_IN/256)&0xff;
-        Reply.Data[len++] = (CLASS_IN)&0xff;
+        reply.Data[len++] = (CLASS_IN/256)&0xff;
+        reply.Data[len++] = (CLASS_IN)&0xff;
 
         // set TTL (4 bytes) a 10 s
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 0;
-        Reply.Data[len++] = 10;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 0;
+        reply.Data[len++] = 10;
 
-        Reply.Data[len++] = 0;
-	      Reply.Data[len++] = strlen(comment)+1;
-	      Reply.Data[len++] = strlen(comment);
-	      memcpy(Reply.Data+len,comment,strlen(comment));
+        reply.Data[len++] = 0;
+	      reply.Data[len++] = strlen(comment)+1;
+	      reply.Data[len++] = strlen(comment);
+	      memcpy(reply.Data+len,comment,strlen(comment));
       	len += strlen(comment);
 
-      	ReplyLen += len; /* total size oof packet */
+      	replyLen += len; /* total size oof packet */
 
 
       }
       
-      if( 0 > sendto(master_socket, &Reply, ReplyLen, 0, &client_addr, client_len))
+      if( 0 > sendto(master_socket, &reply, replyLen, 0, &client_addr, client_len))
       {
         perror("sendto() -> Error");
         exit(EXIT_FAILURE);
@@ -104,30 +104,30 @@ void generate_success_response(DNS_RR Request, const char *ip, const char *comme
 
 
 
-void generate_failure_response(DNS_RR Request,  int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_failure_response(Packet request,  int master_socket, const struct sockaddr client_addr, int client_len){
 
 
-      DNS_RR Reply;
+      Packet reply;
       // tractem el packet; generem el packet de resposta
-      memset(&Reply,0,sizeof(Reply));
+      memset(&reply,0,sizeof(reply));
       
-      Reply.ID = Request.ID;
+      reply.ID = request.ID;
       // Assumim error i posem el flac de authoritive reply
-      Reply.Rcode = RCODE_SERVER_ERROR;
-      Reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
+      reply.Rcode = RCODE_SERVER_ERROR;
+      reply.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
-      int ReplyLen = 12;
+      int replyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (Request.Flags & FLAG_REPLY) == 0) 
+      if( (request.Flags & FLAG_REPLY) == 0) 
       {
 
         int len = 0;
-        Reply.Rcode = RCODE_NXDOMAIN;
-        Reply.Acount = htons(0); // 0 respostes  
+        reply.Rcode = RCODE_NXDOMAIN;
+        reply.Acount = htons(0); // 0 respostes  
 
 			}
 
-      if( 0 > sendto(master_socket, &Reply, ReplyLen, 0, &client_addr, client_len))
+      if( 0 > sendto(master_socket, &reply, replyLen, 0, &client_addr, client_len))
       {
         perror("sendto() -> Error");
         exit(EXIT_FAILURE);

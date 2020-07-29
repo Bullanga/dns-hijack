@@ -2,16 +2,17 @@
 #include "dns_types.h"
 #include "wrapp.h"
 #include "dns_RR_t.h"
+#include "guardaIP.h"
 #include "utils.h"
 
-void process (DNS_RR Request, int master_socket, const struct sockaddr client_addr, socklen_t client_len )
+void process (Packet request, int master_socket, const struct sockaddr client_addr, socklen_t client_len )
 {
 		char req_domain[256];
 		char client_ip[16];
 		char ip[16];		
 		int privat;
 
-    parse_requested_domain(req_domain, Request.Data);
+    parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
 
@@ -21,33 +22,27 @@ void process (DNS_RR Request, int master_socket, const struct sockaddr client_ad
 		// If resource is marked as private and inite is up, ip must be registered
 		if (privat) 
 		{ 
-    	if (check_if_use_inite() && !check_if_registered(client_ip))
+    	if (use_inite && registered(client_ip))
 			{ 
 				// Hook resolved ip to private_ip
-	    	generate_success_response(Request, private_ip, comment, master_socket, client_addr, client_len);
+	    	generate_success_response(request, private_ip, comment, master_socket, client_addr, client_len);
 				return;
 			}
     }
 
 		if( ip == NULL) 
-			generate_failure_response( Request, master_socket, client_addr, client_len);
+			generate_failure_response(request, master_socket, client_addr, client_len);
 		else 
-	   	generate_success_response(Request, ip, comment, master_socket, client_addr, client_len);
+	   	generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
 		return;
     
 }
 
 //check si la ip està registrada
-int check_if_registered(char* ip)
+int registered(char ip[16])
 {
     return r_findValue(ip);
 }
-
-int check_if_use_inite()
-{
-    return use_inite;
-}
-
 
 /*
  *  	ip -> buffer to store the ip corresponding req_domain, NULL if not in resource records

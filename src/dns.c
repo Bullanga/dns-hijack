@@ -140,7 +140,7 @@ int main(int argc, char * argv[]) {
   struct sockaddr_in address; // address del servidor
   struct sockaddr client_addr;
 
-  DNS_RR Request;
+  Packet Request;
   int RequestLen;
 
   // creem el master socket
