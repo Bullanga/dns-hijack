@@ -20,19 +20,28 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
     parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
+
 		privat = resolve_query(req_domain, ip);
 
   	if (use_inite) {
+      // Si no esta registrat pots fer dues coses:
+      //  - Resoldre al host d'inite 
+      //  - Bloquejar la peticio.
+      //  En qualsevol cas tindras una ip a per respondre.
       if (!registered(client_ip)) {
         if (privat) 
           memcpy(ip, BLOCK_TARGET, strlen(BLOCK_TARGET));
         else
           memcpy(ip, inite_host, strlen(inite_host));
+
+        generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
+        return;
       }
     }
 
-		if (ip == NULL) 
+		if (ip == NULL) {
 			generate_failure_response(request, master_socket, client_addr, client_len);
+    }
     else
       generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
 }
