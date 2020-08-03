@@ -26,16 +26,12 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
       //  - Resoldre al host d'inite 
-      //  - Bloquejar la peticio.
-      //  En qualsevol cas tindras una ip a per respondre.
+      //  - Bloquejar la peticio si es privada.
       if (!registered(client_ip)) {
         if (privat) 
           memcpy(ip, BLOCK_TARGET, strlen(BLOCK_TARGET));
         else
           memcpy(ip, inite_host, strlen(inite_host));
-
-        generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
-        return;
       }
     }
 
