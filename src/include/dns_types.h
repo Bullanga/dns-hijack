@@ -76,38 +76,36 @@ enum TYPE
   TYPE_MINFO, /* mailbox or mail list information */
   TYPE_MX, /* mail exchange */
   TYPE_TXT, /* text strings */
-  TYPE_AAAA=0x1c, /* IPv6 address request - RFC1886 */
+  TYPE_AAAA   = 0x1c, /* IPv6 address request - RFC1886 */
   /** QTYPE are a superset of TYPE **/
-  QTYPE_AXFR=252, /* request for a transfer of an entire zone */
-  QTYPE_MAILB=253, /* request for mailbox records (MB/MG/MR) */
-  QTYPE_MAILA=254, /* request for mail agents (Obsolete by MX) */
-  QTYPE_ALL=255 /* request for all records (symbol "*") */
+  QTYPE_AXFR  = 252, /* request for a transfer of an entire zone */
+  QTYPE_MAILB = 253, /* request for mailbox records (MB/MG/MR) */
+  QTYPE_MAILA = 254, /* request for mail agents (Obsolete by MX) */
+  QTYPE_ALL   = 255 /* request for all records (symbol "*") */
   };
 typedef enum TYPE TYPE;
 
 
 struct Packet /* request/reply */
   {
-  uint16_t ID; 	/* session serial number */
-  uint8_t Flags; 	/* see FLAGs */
-  uint8_t Rcode; 	/* see RCODE */
-  uint16_t Qcount; 	/* # entries in the question section */
-  uint16_t Acount; 	/* # entries in the answer section */
-  uint16_t NScount; 	/* # name server records
-			in authority section */
-  uint16_t ARcount; 	/* # resource records
-			in additional records section */
+  uint16_t  ID;       /*  session serial number  */
+  uint8_t   Flags;    /*  see FLAGs */
+  uint8_t   Rcode;    /*  see RCODE */
+  uint16_t  Qcount;   /*  # entries in the question section  */
+  uint16_t  Acount;   /*  # entries in the answer section  */
+  uint16_t  NScount;  /*  # name server records in authority section */
+  uint16_t  ARcount; 	/* # resource records in additional records section */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
-  char Data[500]; 	/* data */
+  char      Data[500]; 	/* data */
   };
 typedef struct Packet Packet;
 
 /*** Flags for DNS header.  OR these together. ***/
 #define FLAG_REPLY 0x80     /* is this a query or reply?
 			       0=query, 1=reply */
-#define FLAG_OPCODE_MASK 0x30 	/* query mask */
-#define FLAG_OPCODE_QUERY 0x00 	/* standard query */
+#define FLAG_OPCODE_MASK   0x30 	/* query mask */
+#define FLAG_OPCODE_QUERY  0x00 	/* standard query */
 #define FLAG_OPCODE_IQUERY 0x10 /* inverse query */
 #define FLAG_OPCODE_STATUS 0x20 /* server status request */
 /* other opcode values bits reserved */
@@ -116,8 +114,8 @@ typedef struct Packet Packet;
 #define FLAG_RD 0x01 	/* recursion denied */
 
 /* Flags added to the rcode byte */
-#define FLAG_RA 0x80 	/* recursion available */
-#define FLAG_AAA 0x20 	/* answer authenticated */
+#define FLAG_RA    0x80 	/* recursion available */
+#define FLAG_AAA   0x20 	/* answer authenticated */
 #define RCODE_MASK 0x0f
 enum RCODE
   {
@@ -134,10 +132,10 @@ typedef enum RCODE RCODE;
 
 
 typedef struct {
-	const char *domain;
-	const int type;
-	const int privat;
-	const char *ip;
+  const  char  *domain;
+  const  int   type;
+  const  int   privat;
+  const  char  *ip;
 } RR;
 
 #endif
