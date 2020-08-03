@@ -25,11 +25,11 @@ const  char  dhcp_ip_range[2][16]  =  {"192.168.1.1",  "192.168.1.200"};
 
 #define IP_INI dhcp_ip_range[0]
 
-const char private_ip[16]= "0.0.0.0";
+const char inite_host[16]= "0.0.0.0";
 
 const RR records[] = {
   /*  domain            type  private  ip           */
-  {   "duniakato.dks",  1,    0,       "127.0.0.1"  },
+  {   "cpdvl-blau.vida",  1,    0,       "192.168.1.42"  },
   {   "wikipedia.dks",  1,    1,       "127.0.0.1"  },
 };
 

@@ -6,6 +6,10 @@
 #include "guardaIP.h"
 #include "utils.h"
 
+#define BLOCK_TARGET "0.0.0.0"
+
+// Takes almost everithing as a parameter...
+// 1. Parses from the raw packed
 void process (Packet request, int master_socket, const struct sockaddr client_addr, socklen_t client_len )
 {
 		char req_domain[256];
@@ -16,27 +20,21 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
     parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
-
-
 		privat = resolve_query(req_domain, ip);
 
-		// If resource is marked as private and inite is up, ip must be registered
-		if (privat) 
-		{ 
-    	if (use_inite && registered(client_ip))
-			{ 
-				// Hook resolved ip to private_ip
-	    	generate_success_response(request, private_ip, comment, master_socket, client_addr, client_len);
-				return;
-			}
+  	if (use_inite) {
+      if (!registered(client_ip)) {
+        if (privat) 
+          memcpy(ip, BLOCK_TARGET, strlen(BLOCK_TARGET));
+        else
+          memcpy(ip, inite_host, strlen(inite_host));
+      }
     }
 
-		if( ip == NULL) 
+		if (ip == NULL) 
 			generate_failure_response(request, master_socket, client_addr, client_len);
-		else 
-	   	generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
-		return;
-    
+    else
+      generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
 }
 
 //check si la ip està registrada

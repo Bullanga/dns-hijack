@@ -8,8 +8,6 @@
 #include "dns_types.h"
 #include "dnslib.h"
 
-
-
 void generate_success_response(Packet request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
       
       Packet reply;
@@ -28,7 +26,7 @@ void generate_success_response(Packet request, const char *ip, const char *comme
 
 //        write(1,"ENTRO!\n",7);
         int len = 0;
-        reply.Rcode = RCODE_NO_ERROR;
+        reply.Rcode  = RCODE_NO_ERROR;
         reply.Acount = htons(2); // 2 respostes: hostname and TXT 
 
         // RESPOSTA 1: hostname
@@ -63,8 +61,8 @@ void generate_success_response(Packet request, const char *ip, const char *comme
         int ipAddr = ntohl(inet_addr(ip));
         reply.Data[len++] = (ipAddr >> 24) & 0xff;
         reply.Data[len++] = (ipAddr >> 16) & 0xff;
-        reply.Data[len++] = (ipAddr >> 8) & 0xff;
-        reply.Data[len++] = (ipAddr) & 0xff;
+        reply.Data[len++] = (ipAddr >> 8)  & 0xff;
+        reply.Data[len++] = (ipAddr)       & 0xff;
       
 
         // Resposta 2: hostname i TXT
@@ -72,13 +70,13 @@ void generate_success_response(Packet request, const char *ip, const char *comme
         reply.Data[len++] = 0x0c; // punter al nom (inici de data)
         
         // set upper byte of TYPE
-        reply.Data[len++] = (TYPE_TXT/256)&0xff;
+        reply.Data[len++] = (TYPE_TXT/256) & 0xff;
         // set lower byte of TYPE
-        reply.Data[len++] = (TYPE_TXT)&0xff;
+        reply.Data[len++] = (TYPE_TXT)     & 0xff;
 
         // set CLASS
-        reply.Data[len++] = (CLASS_IN/256)&0xff;
-        reply.Data[len++] = (CLASS_IN)&0xff;
+        reply.Data[len++] = (CLASS_IN/256) & 0xff;
+        reply.Data[len++] = (CLASS_IN)     & 0xff;
 
         // set TTL (4 bytes) a 10 s
         reply.Data[len++] = 0;
@@ -105,11 +103,7 @@ void generate_success_response(Packet request, const char *ip, const char *comme
 
 }
 
-
-
-
 void generate_failure_response(Packet request,  int master_socket, const struct sockaddr client_addr, int client_len){
-
 
       Packet reply;
       // tractem el packet; generem el packet de resposta
@@ -136,8 +130,8 @@ void generate_failure_response(Packet request,  int master_socket, const struct 
         exit(EXIT_FAILURE);
       }
 
-
 }
+
 void parse_requested_domain(char *target, char *data) {
 	
 	memset(target,0,16);
@@ -156,12 +150,8 @@ void parse_requested_domain(char *target, char *data) {
 
 void parse_client_ip(char *target, const struct sockaddr *client) {
 
-	
 	memset(target,0,16);
 	char *ip = inet_ntoa(((struct sockaddr_in *)client)->sin_addr);
 	memcpy(target,ip,strlen(ip));
 
-
 }
-
-
