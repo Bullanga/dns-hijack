@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "munit/munit.h"
-#include "wrapp.h"
-#include "tests_guardaIP.h"
+//#include "wrapp.h"
+#include "guardaIP.h"
 
 //la gracia d'aquest fitxer es anar posant els tests de cada paquet i veure si els compleix
 
@@ -16,32 +16,36 @@
 * 3. Suite de tests de guardaIP */
 
 MunitResult test_guardaIP_init_guardaIP(const MunitParameter params[], void* user_data_or_fixture){
+    int length = r_get_length();
     char* ip_test_ini = "192.168.2.3";
     char* ip_test_final = "192.168.3.10";
     //Aquest rang és de 262 IPs
     if (!init_guardaIP(ip_test_ini,ip_test_final)) return MUNIT_FAIL;
-    munit_assert_int(r_lenght, ==, 263);
+    munit_assert_int(length, ==, 263);
     return MUNIT_OK;
 }
 
 MunitResult test_guardaIP_r_clear(const MunitParameter params[], void* user_data_or_fixture){
+    int* registre = r_get_registry();
+    int length = r_get_length();
     char* ip_test_ini = "192.168.2.3";
     char* ip_test_final = "192.168.3.10";
     init_guardaIP(ip_test_ini, ip_test_final);
     int i;
-    for (i = 0; i < r_length; i++){
-	munit_assert_int(registry[i], ==, 0);
+    for (i = 0; i < length; i++){
+	munit_assert_int(registre[i], ==, 0);
     }
     return MUNIT_OK;
 }
 MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_or_fixture){
+    int* registre = r_get_registry();
     const char* ip_test_ini = "192.168.2.3";
     const char* ip_test_final = "192.168.3.10";
     init_guardaIP(ip_test_ini, ip_test_final);
     char a[]= "192.168.2.4";
-    munit_assert_int(r_add(a) )
-    munit_assert(r_add(a) && registry[160]);
-    return MUNIT_OK
+    munit_assert(r_add(a) );
+    munit_assert(r_add(a) && registre[160]);
+    return MUNIT_OK;
 }
 MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_data_or_fixture){
     char* ip_test_ini = "192.168.2.3";
@@ -71,8 +75,8 @@ static MunitTest guardaIP[] = {
   },
   //Aqui s'ensenyen els tests posats a l'array d'una manera més compacta
   { (char*) "/test_guardaIP_r_clear", test_guardaIP_r_clear, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
-  { (char*) "/test_guardaIP_r_add", test_guardaIP_r_add, NULL, NULL, MUNIT_TEST_OPTION_NONE, test_params },
-  { (char*) "/test_guardaIP_r_findValue", test_guardaIP_r_findValue, NULL, NULL, MUNIT_TEST_OPTION_NONE, test_params },
+  { (char*) "/test_guardaIP_r_add", test_guardaIP_r_add, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/test_guardaIP_r_findValue", test_guardaIP_r_findValue, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL } //Sanseakabó
 };
 
@@ -92,7 +96,7 @@ static const MunitSuite suite_guardaIP = {
 // ...aqui van tots els altres tests (funcions, array de tests i suite de cada una de les funcionalitats)...
 
 //Main dels tests perquè executi les suites 
-int main(int argc, const char* argv[]){
+int main(int argc, char* const* argv){
     munit_suite_main(&suite_guardaIP, NULL, argc, argv);
 }
 

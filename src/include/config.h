@@ -33,6 +33,6 @@ const RR records[] = {
   {   "wikipedia.dks",  1,    1,       "127.0.0.1"  },
 };
 
-int r_length;
-int *registry;
+//int r_length;
+//int *registry;
 #endif

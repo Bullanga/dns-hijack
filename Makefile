@@ -20,20 +20,19 @@ T_INCLUDE=$(TESTS_DIR)/include
 ## Directori del codi font dels tests
 T_SRC_DIR=$(TESTS_DIR)/src
 
-## Fitxers als que aplicar test
-FILES_TO_TEST= guardaIP
+SRC= dns.c dnslib.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
 
-SRC= dns.c dnslib.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT !!!
+SRC_TEST= guardaIP.c   #fitxers que es testejen 
 
 OBJ=${SRC:.c=.o}
-
-
+OBJ_TEST=${SRC_TEST:.c=.o}
 
 CFLAGS= -Wall -std=c99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
+CFLAGS_TEST= -Wall -std=c99 -ggdb -I $(INCLUDE) -I $(T_INCLUDE) -I /usr/include/postgresql
 CC=gcc
 
 #### FITXERS DEL CODI ####
-all: dns
+all: dns 
 
 dns: ${OBJ}	
 	$(CC) $(CFLAGS) -o dns $^ -lpq
@@ -44,17 +43,12 @@ dns: ${OBJ}
 #### TESTS ####
 ## CAL TENIR EN COMPTE QUE CAL HAVER AFEGIT EL QUE ES VOL TESTEJAR A LA VAR FILES_TO_TEST ###
 
-tests: all_tests
-	$(CC) -o test $(TESTS_DIR)/test.c *.o -I $(INCLUDE) -I $(T_INCLUDE) -I $(T_SRC_DIR) -I $(SRC_DIR)   
+tests: ${OBJ_TEST} test.o 
+	$(CC) -o test $^ -lpq 
 	./test
 
-files_to_test:
-	for i in $(FILES_TO_TEST); do \
-	    $(CC) -g -I $(INCLUDE) -c  $(SRC_DIR)/$$i.c; \
-	    done
-
-all_tests: 
-	$(CC)  -g -c $(T_SRC_DIR)/*.c -I $(INCLUDE) -I $(SRC_DIR) -I $(T_INCLUDE)
+test.o: 
+	$(CC) $(CFLAGS_TEST) -c $(TESTS_DIR)/test.c
 
 
 

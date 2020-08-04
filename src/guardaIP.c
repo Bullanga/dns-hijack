@@ -3,8 +3,10 @@
 #include <stdio.h>
 #include "guardaIP.h"
 
+const char dhcp_ip_range[2][16] ;
+static int r_length;
+static int* registry;
 
-extern const char dhcp_ip_range[2][16] ;
 
 #define calcIndex(a) (calcRange(dhcp_ip_range[0],a))
 
@@ -60,6 +62,10 @@ int r_add (const char* ip){
 
 int r_get_length(){
     return r_length;
+}
+
+int* r_get_registry(){
+    return registry;
 }
 
 int init_guardaIP(const char* ip_ini, const char* ip_fin){ 
