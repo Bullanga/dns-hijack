@@ -29,8 +29,8 @@ const char inite_host[16]= "0.0.0.0";
 
 const RR records[] = {
   /*  domain            type  private  ip           */
-  {   "cpdvl-blau.vida",  1,    0,       "192.168.1.42"  },
-  {   "wikipedia.dks",  1,    1,       "127.0.0.1"  },
+  {   "cpdvl-blau.vida",  TYPE_A,    0,       "192.168.1.42"  },
+  {   "wikipedia.dks",  TYPE_A,    1,       "127.0.0.1"  },
 };
 
 int r_length;
