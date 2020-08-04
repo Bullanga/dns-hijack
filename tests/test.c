@@ -6,6 +6,53 @@
 
 //la gracia d'aquest fitxer es anar posant els tests de cada paquet i veure si els compleix
 
+//##########################################
+//      AQUI COMENCEN ELS TESTS DE guardaIP
+//##########################################
+
+/* Ordre en el que es troben les coses del test:
+* 1. Funcions que duen a terme els tests
+* 2. Array de tests
+* 3. Suite de tests de guardaIP */
+
+MunitResult test_guardaIP_init_guardaIP(const MunitParameter params[], void* user_data_or_fixture){
+    char* ip_test_ini = "192.168.2.3";
+    char* ip_test_final = "192.168.3.10";
+    //Aquest rang és de 262 IPs
+    if (!init_guardaIP(ip_test_ini,ip_test_final)) return MUNIT_FAIL;
+    munit_assert_int(r_lenght, ==, 263);
+    return MUNIT_OK;
+}
+
+MunitResult test_guardaIP_r_clear(const MunitParameter params[], void* user_data_or_fixture){
+    char* ip_test_ini = "192.168.2.3";
+    char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    int i;
+    for (i = 0; i < r_length; i++){
+	munit_assert_int(registry[i], ==, 0);
+    }
+    return MUNIT_OK;
+}
+MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_or_fixture){
+    const char* ip_test_ini = "192.168.2.3";
+    const char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    char a[]= "192.168.2.4";
+    munit_assert_int(r_add(a) )
+    munit_assert(r_add(a) && registry[160]);
+    return MUNIT_OK
+}
+MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_data_or_fixture){
+    char* ip_test_ini = "192.168.2.3";
+    char* ip_test_final = "192.168.3.10";
+    init_guardaIP(ip_test_ini, ip_test_final);
+    char a[]= "192.168.2.4";
+    r_add(a);
+    munit_assert(r_findValue(a));
+    return MUNIT_OK;
+}
+
 //AQUI L'ARRAY DE TESTS DE guardaIP
 static MunitTest guardaIP[] = {
   {
@@ -39,7 +86,13 @@ static const MunitSuite suite_guardaIP = {
 };
 
 
-int main(){
-    munit_suite_main(&test_suite, NULL, argc, argv);
+//       AQUI ACABEN ELS TESTS DE guardaIP
+//#################################################
+
+// ...aqui van tots els altres tests (funcions, array de tests i suite de cada una de les funcionalitats)...
+
+//Main dels tests perquè executi les suites 
+int main(int argc, const char* argv[]){
+    munit_suite_main(&suite_guardaIP, NULL, argc, argv);
 }
 
