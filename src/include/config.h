@@ -1,6 +1,19 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#include <stdio.h>
+#include <string.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <errno.h>
+#include <sched.h>
+#include <sys/mman.h>
+//#include <postgresql/libpq-fe.h>
+#include <stdlib.h>
+
+#include "dns_types.h"
+
 // Configutation file and variables
 /*
 *	`use_inite` can have only two differents values:

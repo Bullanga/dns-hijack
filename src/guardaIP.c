@@ -2,8 +2,8 @@
 #include <string.h>
 #include <stdio.h>
 #include "guardaIP.h"
+#include "variables.h"
 
-const char dhcp_ip_range[2][16] ;
 static int r_length;
 static int* registry;
 
@@ -41,6 +41,7 @@ int calcRange(const char* ip_ini,const char* ip_fin){
 	+ (ip_finv[1]-ip_iniv[1])*256*256
 	+ (ip_finv[2]-ip_iniv[2])*256
 	+ (ip_finv[3]-ip_iniv[3]);
+    //printf("He calculat un índex de: %d\n", range);
     return range;
 }
 
@@ -56,6 +57,7 @@ int r_clear (){
 
 int r_add (const char* ip){
     int ind  = calcIndex(ip);
+    //printf("r_add ha calculat un índex de %d\n", ind);
     registry[ind] = 1;
     return ind;
 }
@@ -71,6 +73,7 @@ int* r_get_registry(){
 int init_guardaIP(const char* ip_ini, const char* ip_fin){ 
     r_length = calcRange(ip_ini,ip_fin);
     registry = malloc(r_length*sizeof(int));
+    //printf("He calculat rang de: %d\n", r_length);
     return 1;
 }
 

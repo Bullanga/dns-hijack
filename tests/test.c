@@ -1,8 +1,8 @@
-#include <stdio.h>
-#include <string.h>
 #include "munit/munit.h"
 //#include "wrapp.h"
 #include "guardaIP.h"
+#include "config.h"
+//#include "variables.h"
 
 //la gracia d'aquest fitxer es anar posant els tests de cada paquet i veure si els compleix
 
@@ -16,20 +16,20 @@
 * 3. Suite de tests de guardaIP */
 
 MunitResult test_guardaIP_init_guardaIP(const MunitParameter params[], void* user_data_or_fixture){
-    int length = r_get_length();
-    char* ip_test_ini = "192.168.2.3";
-    char* ip_test_final = "192.168.3.10";
-    //Aquest rang és de 262 IPs
+    const char* ip_test_ini = dhcp_ip_range[0];
+    const char* ip_test_final = dhcp_ip_range[1];
+    //printf("IP inicial: %s IP final: %s", ip_test_ini, ip_test_final);
     if (!init_guardaIP(ip_test_ini,ip_test_final)) return MUNIT_FAIL;
-    munit_assert_int(length, ==, 263);
+    int length = r_get_length();
+    munit_assert_int(length, ==, 199);
     return MUNIT_OK;
 }
 
 MunitResult test_guardaIP_r_clear(const MunitParameter params[], void* user_data_or_fixture){
     int* registre = r_get_registry();
     int length = r_get_length();
-    char* ip_test_ini = "192.168.2.3";
-    char* ip_test_final = "192.168.3.10";
+    const char* ip_test_ini = dhcp_ip_range[0];
+    const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
     int i;
     for (i = 0; i < length; i++){
@@ -38,20 +38,22 @@ MunitResult test_guardaIP_r_clear(const MunitParameter params[], void* user_data
     return MUNIT_OK;
 }
 MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_or_fixture){
-    int* registre = r_get_registry();
-    const char* ip_test_ini = "192.168.2.3";
-    const char* ip_test_final = "192.168.3.10";
+    const char* ip_test_ini = dhcp_ip_range[0];
+    const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
-    char a[]= "192.168.2.4";
+    int* registre = r_get_registry();
+    char a[]= "192.168.1.4";
+    //printf("La llargada dels registres és de %d\n", r_get_length());
+    r_add(a);
     munit_assert(r_add(a) );
-    munit_assert(r_add(a) && registre[160]);
+    munit_assert(r_add(a) && registre[3]);
     return MUNIT_OK;
 }
 MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_data_or_fixture){
-    char* ip_test_ini = "192.168.2.3";
-    char* ip_test_final = "192.168.3.10";
+    const char* ip_test_ini = dhcp_ip_range[0];
+    const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
-    char a[]= "192.168.2.4";
+    char a[]= "192.168.1.4";
     r_add(a);
     munit_assert(r_findValue(a));
     return MUNIT_OK;
