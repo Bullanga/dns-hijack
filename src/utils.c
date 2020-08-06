@@ -16,12 +16,13 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
 		char client_ip[16];
 		char ip[16];		
 		int privat;
+		unsigned int type;
 
-    parse_requested_domain(req_domain, request.Data);
+    type = parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
 
-		privat = resolve_query(req_domain, ip);
+		privat = resolve_query(ip, req_domain, type);
 
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
@@ -52,7 +53,7 @@ int registered(char ip[16])
  *  	ip -> buffer to store the ip corresponding req_domain, NULL if not in resource records
  * 		@return -> 1 if its a private domain, 0 if not
  */
-int resolve_query(char ip[16], char *req_domain)
+int resolve_query(char ip[16], char *req_domain, unsigned int type)
 {
 	int size = sizeof(records)/sizeof(RR);
 	const RR *rr = records;
