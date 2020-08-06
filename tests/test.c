@@ -44,11 +44,22 @@ MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_o
     int* registre = r_get_registry();
     char a[]= "192.168.1.4";
     //printf("La llargada dels registres és de %d\n", r_get_length());
-    r_add(a);
+    if (r_add(a)==-1) return MUNIT_FAIL;
     munit_assert(r_add(a) );
     munit_assert(r_add(a) && registre[3]);
     return MUNIT_OK;
 }
+
+MunitResult test_guardaIP_r_add_forçant_error(const MunitParameter params[], void* user_data_or_fixture){
+    const char* ip_test_ini = dhcp_ip_range[0];
+    const char* ip_test_final = dhcp_ip_range[1];
+    init_guardaIP(ip_test_ini, ip_test_final);
+    int* registre = r_get_registry();
+    char a[]= "192.199.1.4";
+    //printf("La llargada dels registres és de %d\n", r_get_length());
+    munit_assert_int(-1, ==, r_add(a));
+}
+
 MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_data_or_fixture){
     const char* ip_test_ini = dhcp_ip_range[0];
     const char* ip_test_final = dhcp_ip_range[1];
