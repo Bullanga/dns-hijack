@@ -16,12 +16,12 @@
 * 3. Suite de tests de guardaIP */
 
 MunitResult test_guardaIP_init_guardaIP(const MunitParameter params[], void* user_data_or_fixture){
-    const char* ip_test_ini = dhcp_ip_range[0];
-    const char* ip_test_final = dhcp_ip_range[1];
+    const char* ip_test_ini = "192.168.2.0";
+    const char* ip_test_final = "192.168.3.4";
     //printf("IP inicial: %s IP final: %s", ip_test_ini, ip_test_final);
     if (!init_guardaIP(ip_test_ini,ip_test_final)) return MUNIT_FAIL;
     int length = r_get_length();
-    munit_assert_int(length, ==, 199);
+    munit_assert_int(length, ==, 260);
     return MUNIT_OK;
 }
 
@@ -42,11 +42,12 @@ MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_o
     const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
     int* registre = r_get_registry();
-    char a[]= "192.168.1.4";
+    char a[16];
+    strcpy(a,dhcp_ip_range[0]);
     //printf("La llargada dels registres és de %d\n", r_get_length());
     if (r_add(a)==-1) return MUNIT_FAIL;
     munit_assert(r_add(a) );
-    munit_assert(r_add(a) && registre[3]);
+    munit_assert(r_add(a) && registre[0]);
     return MUNIT_OK;
 }
 
@@ -58,14 +59,16 @@ MunitResult test_guardaIP_r_add_forçant_error(const MunitParameter params[], vo
     char a[]= "192.199.1.4";
     //printf("La llargada dels registres és de %d\n", r_get_length());
     munit_assert_int(-1, ==, r_add(a));
+    return MUNIT_OK;
 }
 
 MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_data_or_fixture){
     const char* ip_test_ini = dhcp_ip_range[0];
     const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
-    char a[]= "192.168.1.4";
-    r_add(a);
+    char a[16];
+    strcpy(a,dhcp_ip_range[1]);
+    if (r_add(a)==-1) return MUNIT_FAIL;
     munit_assert(r_findValue(a));
     return MUNIT_OK;
 }
@@ -88,6 +91,7 @@ static MunitTest guardaIP[] = {
   },
   //Aqui s'ensenyen els tests posats a l'array d'una manera més compacta
   { (char*) "/test_guardaIP_r_clear", test_guardaIP_r_clear, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+  { (char*) "/test_guardaIP_r_add_forçant_error", test_guardaIP_r_add_forçant_error, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { (char*) "/test_guardaIP_r_add", test_guardaIP_r_add, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { (char*) "/test_guardaIP_r_findValue", test_guardaIP_r_findValue, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL } //Sanseakabó
