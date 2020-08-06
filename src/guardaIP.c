@@ -55,8 +55,12 @@ int r_clear (){
     return 1;
 }
 
-int r_add (const char* ip){
+int r_add (const char* ip){   //Un insipient control d'errors al retornar si la ip és fora del rang.
     int ind  = calcIndex(ip);
+    if ( ind >= r_length ){
+        printf("ERROR: IP out of range. You hasn't set correctly ip range on config.h. Change it please.");
+        return -1;
+    }
     //printf("r_add ha calculat un índex de %d\n", ind);
     registry[ind] = 1;
     return ind;
