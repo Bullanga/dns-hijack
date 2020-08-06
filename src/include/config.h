@@ -21,7 +21,7 @@ const  char*  db_name      =  "db_dks";
 
 const char comment[] = "More info: https://github.com/dhap0/dns-hijack";
 
-const  char  dhcp_ip_range[2][16]  =  {"192.168.1.1",  "192.168.1.200"};
+const  char  dhcp_ip_range[2][16]  =  {"127.0.0.0",  "127.0.0.200"};
 
 #define IP_INI dhcp_ip_range[0]
 

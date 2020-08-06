@@ -145,10 +145,9 @@ unsigned int parse_requested_domain(char *target, char *data) {
 	dot = (int) data[i++];
 
 	}
-	char buff[256];
-	sprintf(buff, "TYPE: %u\n", (unsigned int) data[i]);
-	write(1,buff,strlen(buff));
-	return 1;
+
+	
+	return (uint16_t)data[++i];
 
 }
 
