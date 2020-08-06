@@ -132,7 +132,7 @@ void generate_failure_response(Packet request,  int master_socket, const struct 
 
 }
 
-void parse_requested_domain(char *target, char *data) {
+unsigned int parse_requested_domain(char *target, char *data) {
 	
 	memset(target,0,16);
 	int i = 1;
@@ -145,6 +145,9 @@ void parse_requested_domain(char *target, char *data) {
 	dot = (int) data[i++];
 
 	}
+
+	
+	return (uint16_t)data[++i];
 
 }
 
