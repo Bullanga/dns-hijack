@@ -22,7 +22,6 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
     parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
-
 		privat = resolve_query(ip, req_domain);
 
   	if (use_inite) {
@@ -30,10 +29,10 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
       //  - Resoldre al host d'inite 
       //  - Bloquejar la peticio si es privada.
       if (!registered(client_ip)) {
-        if (privat) 
-          memcpy(ip, BLOCK_TARGET, strlen(BLOCK_TARGET));
+        if (privat)
+          strcpy(ip, BLOCK_TARGET);
         else
-          memcpy(ip, inite_host, strlen(inite_host));
+          strcpy(ip, inite_host);
       }
     }
 
@@ -61,12 +60,8 @@ int resolve_query(char ip[16], char *req_domain)
 	memset(ip,'\x00',16);
 	for(int i = 0; i < RECORDS_SIZE; i++)
 	{
-    printf("This is the pointer domain = %s\n", rr->domain);
-    printf("This is the req_domain = %s\n",req_domain);
 		if(0 == strcmp(req_domain, rr->domain))
 		{
-      printf("RR matching\n");
-      printf("This is the pointer ip = %s\n", rr->ip);
 			memcpy(ip, rr->ip, 15);
 			return rr->privat;			
 		}
