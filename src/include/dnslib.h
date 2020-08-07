@@ -1,6 +1,8 @@
 #ifndef __DNSLIB_H_
 #define __DNSLIN_H_
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include "dns_types.h"
 
 
 void generate_failure_response(Packet request, int master_socket, const struct sockaddr client_addr, int client_len);

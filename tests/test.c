@@ -1,6 +1,7 @@
 #include "munit/munit.h"
 //#include "wrapp.h"
 #include "guardaIP.h"
+#include "dnslib.h"
 #include "config.h"
 //#include "variables.h"
 
@@ -14,6 +15,19 @@
 * 1. Funcions que duen a terme els tests
 * 2. Array de tests
 * 3. Suite de tests de guardaIP */
+
+MunitResult test_parse_request_domains(const MunitParameter params[], void* user_data_or_fixture){
+//		char *data = user_data_or_fixture;
+		char param[] = "\006google\002es\000\001\000";
+		char domain[256];
+		unsigned int type;
+		type = parse_requested_domain(domain, param);
+		
+		munit_assert_string_equal(domain,"google.es");
+		munit_assert_uint16(type,==,TYPE_A);
+		
+    return MUNIT_OK;
+}
 
 MunitResult test_guardaIP_init_guardaIP(const MunitParameter params[], void* user_data_or_fixture){
     const char* ip_test_ini = dhcp_ip_range[0];
@@ -60,7 +74,7 @@ MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_
 }
 
 //AQUI L'ARRAY DE TESTS DE guardaIP
-static MunitTest guardaIP[] = {
+static MunitTest tests_guardaIP[] = {
   {
     /* The name is just a unique human-readable way to identify the
      * test. You can use it to run a specific test if you want, but
@@ -82,15 +96,27 @@ static MunitTest guardaIP[] = {
   { NULL, NULL, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL } //Sanseakabó
 };
 
+static MunitTest tests_dnslib[] = {
+	{ "/test_parse_request_domains", test_parse_request_domains, NULL, NULL, MUNIT_TEST_OPTION_NONE, NULL },
+};
+
 //AQUI HI HA LA SUITE DEL TEST DE guardaIP
 static const MunitSuite suite_guardaIP = {
-  "/test-guardaIP", /* name */
-  guardaIP, /* tests */
+  "/guardaIP", /* name */
+  tests_guardaIP, /* tests */
   NULL, /* suites */
   1, /* iterations */
   MUNIT_SUITE_OPTION_NONE /* options */
 };
 
+//AQUI HI HA LA SUITE DEL TEST DE guardaIP
+static const MunitSuite suite_dnslib = {
+  "/dnslib", /* name */
+  tests_dnslib, /* tests */
+  NULL, /* suites */
+  1, /* iterations */
+  MUNIT_SUITE_OPTION_NONE /* options */
+};
 
 //       AQUI ACABEN ELS TESTS DE guardaIP
 //#################################################
@@ -100,5 +126,6 @@ static const MunitSuite suite_guardaIP = {
 //Main dels tests perquè executi les suites 
 int main(int argc, char* const* argv){
     munit_suite_main(&suite_guardaIP, NULL, argc, argv);
+		munit_suite_main(&suite_dnslib, NULL, argc, argv);
 }
 

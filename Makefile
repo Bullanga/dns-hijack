@@ -22,7 +22,7 @@ T_INCLUDE=$(T_SRC_DIR)/include
 
 SRC= dns.c dnslib.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
 
-SRC_TEST= guardaIP.c   #fitxers que es testejen 
+SRC_TEST= guardaIP.c dnslib.c  #fitxers que es testejen 
 
 TEST_FRAMEWORK= tests/src/include/munit
 
@@ -45,15 +45,15 @@ dns: ${OBJ}
 #### TESTS ####
 ## CAL TENIR EN COMPTE QUE CAL HAVER AFEGIT EL QUE ES VOL TESTEJAR A LA VAR FILES_TO_TEST ###
 
-tests: test.o munit.o ${OBJ_TEST}
+tests: ${OBJ_TEST} munit.o test.o 
 	$(CC) $(CFLAGS_TEST) -o test $^ -lpq 
-	./test
 
 test.o: 
 	$(CC) $(CFLAGS_TEST) -c $(TESTS_DIR)/test.c 
 
 munit.o: 
 	$(CC) $(CFLAGS_TEST) -c $(TEST_FRAMEWORK)/munit.c
+
 
 clean:     # AIXO ENS HO HEM DE CURRAR
 	rm -rf *.o test dns $(INCLUDE)/*.gch
