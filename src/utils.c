@@ -6,10 +6,6 @@
 #include "guardaIP.h"
 #include "utils.h"
 
-
-#include <stdio.h>
-
-
 // Takes almost everithing as a parameter...
 // 1. Parses from the raw packed
 void process (Packet request, int master_socket, const struct sockaddr client_addr, socklen_t client_len )
