@@ -38,12 +38,14 @@ const  char  dhcp_ip_range[2][16]  =  {"127.0.0.0",  "127.0.0.200"};
 
 #define IP_INI dhcp_ip_range[0]
 
-const char inite_host[16]= "0.0.0.0";
+const char inite_host[16]= "192.168.1.35";
 
+const int RECORDS_SIZE = 2;
 const RR records[] = {
+  /* REMEMBER THAT THE DOMAIN SHOULD BE ENTERED WITH A DOT AT THE END */
   /*  domain            type  private  ip           */
-  {   "cpdvl-blau.vida",  TYPE_A,    0,       "192.168.1.42"  },
-  {   "wikipedia.dks",  TYPE_A,    1,       "127.0.0.1"  },
+  {   "cpdvl-blau.vida.",  TYPE_A,    0,       "192.168.1.42"  },
+  {   "wikipedia.dks.",  TYPE_A,    1,       "127.0.0.1"  },
 };
 
 //int r_length;

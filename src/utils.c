@@ -6,7 +6,9 @@
 #include "guardaIP.h"
 #include "utils.h"
 
-#define BLOCK_TARGET "0.0.0.0"
+
+#include <stdio.h>
+
 
 // Takes almost everithing as a parameter...
 // 1. Parses from the raw packed
@@ -18,9 +20,10 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
 		int privat;
 		unsigned int type;
 
+    ip[0] = '\x00';
+
     type = parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
-
 
 		privat = resolve_query(ip, req_domain, type);
 
@@ -29,14 +32,15 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
       //  - Resoldre al host d'inite 
       //  - Bloquejar la peticio si es privada.
       if (!registered(client_ip)) {
-        if (privat) 
-          memcpy(ip, BLOCK_TARGET, strlen(BLOCK_TARGET));
+        if (privat)
+          strcpy(ip, BLOCK_TARGET);
         else
-          memcpy(ip, inite_host, strlen(inite_host));
+          strcpy(ip, inite_host);
       }
     }
 
-		if (ip == NULL) {
+
+		if (ip[0] == '\x00') {
 			generate_failure_response(request, master_socket, client_addr, client_len);
     }
     else
@@ -55,16 +59,16 @@ int registered(char ip[16])
  */
 int resolve_query(char ip[16], char *req_domain, unsigned int type)
 {
-	int size = sizeof(records)/sizeof(RR);
-	const RR *rr = records;
-	memset(ip,'\x00',16);
-	for(int i = 0; i < size; i++)
+  RR *rr;
+  rr = (RR *) &records;
+	for(int i = 0; i < RECORDS_SIZE; i++)
 	{
 		if(0 == strcmp(req_domain, rr->domain))
 		{
-			memcpy(ip, rr->ip, 15);
+			strcpy(ip, rr->ip);
 			return rr->privat;			
 		}
+    rr++;
 	}
 	return 0;
 }
