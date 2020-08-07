@@ -46,8 +46,8 @@ MunitResult test_guardaIP_r_add(const MunitParameter params[], void* user_data_o
     strcpy(a,dhcp_ip_range[0]);
     //printf("La llargada dels registres és de %d\n", r_get_length());
     if (r_add(a)==-1) return MUNIT_FAIL;
-    munit_assert(r_add(a) );
-    munit_assert(r_add(a) && registre[0]);
+    munit_assert_int(r_add(a),==,0);   //Arriba el registre 0 quee es el primer
+    munit_assert(registre[0]);
     return MUNIT_OK;
 }
 
@@ -67,9 +67,11 @@ MunitResult test_guardaIP_r_findValue(const MunitParameter params[], void* user_
     const char* ip_test_final = dhcp_ip_range[1];
     init_guardaIP(ip_test_ini, ip_test_final);
     char a[16];
-    strcpy(a,dhcp_ip_range[1]);
+    strcpy(a,dhcp_ip_range[0]);
     if (r_add(a)==-1) return MUNIT_FAIL;
-    munit_assert(r_findValue(a));
+    int index = r_findValue(a);
+    if ( index == -1 ) return MUNIT_FAIL;
+    munit_assert(index);
     return MUNIT_OK;
 }
 
