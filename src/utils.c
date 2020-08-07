@@ -19,6 +19,8 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
 		char ip[16];		
 		int privat;
 
+    ip[0] = '\x00';
+
     parse_requested_domain(req_domain, request.Data);
     parse_client_ip(client_ip, &client_addr);
 
@@ -36,7 +38,8 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
       }
     }
 
-		if (ip == NULL) {
+
+		if (ip[0] == '\x00') {
 			generate_failure_response(request, master_socket, client_addr, client_len);
     }
     else
@@ -57,7 +60,6 @@ int resolve_query(char ip[16], char *req_domain)
 {
   RR *rr;
   rr = (RR *) &records;
-	memset(ip,'\x00',16);
 	for(int i = 0; i < RECORDS_SIZE; i++)
 	{
 		if(0 == strcmp(req_domain, rr->domain))
