@@ -21,7 +21,7 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
     parse_client_ip(client_ip, &client_addr);
 
 
-		privat = resolve_query(req_domain, ip);
+		privat = resolve_query(ip, req_domain);
 
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
