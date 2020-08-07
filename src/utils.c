@@ -6,7 +6,9 @@
 #include "guardaIP.h"
 #include "utils.h"
 
-#define BLOCK_TARGET "0.0.0.0"
+
+#include <stdio.h>
+
 
 // Takes almost everithing as a parameter...
 // 1. Parses from the raw packed
@@ -54,16 +56,21 @@ int registered(char ip[16])
  */
 int resolve_query(char ip[16], char *req_domain)
 {
-	int size = sizeof(records)/sizeof(RR);
-	const RR *rr = records;
+  RR *rr;
+  rr = (RR *) &records;
 	memset(ip,'\x00',16);
-	for(int i = 0; i < size; i++)
+	for(int i = 0; i < RECORDS_SIZE; i++)
 	{
+    printf("This is the pointer domain = %s\n", rr->domain);
+    printf("This is the req_domain = %s\n",req_domain);
 		if(0 == strcmp(req_domain, rr->domain))
 		{
+      printf("RR matching\n");
+      printf("This is the pointer ip = %s\n", rr->ip);
 			memcpy(ip, rr->ip, 15);
 			return rr->privat;			
 		}
+    rr++;
 	}
 	return 0;
 }
