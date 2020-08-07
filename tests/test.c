@@ -18,7 +18,7 @@
 
 MunitResult test_parse_request_domains(const MunitParameter params[], void* user_data_or_fixture){
 //		char *data = user_data_or_fixture;
-		char param[] = "\006google\002es\000\001\000";
+		char param[] = "\006google\002es\000\000\001";
 		char domain[256];
 		unsigned int type;
 		type = parse_requested_domain(domain, param);

@@ -145,7 +145,7 @@ unsigned int parse_requested_domain(char *target, char *data) {
 	dot = (int) data[i++];
 
 	}
-
+	target[i-2] = '\x00';
 	
 	return (uint16_t)data[++i];
 
