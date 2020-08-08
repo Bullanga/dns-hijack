@@ -33,7 +33,7 @@ int num_forks = 0;
 char* getLastIPRegistered() {
   char *ret_val;
   char credentials[strlen("user= password= dbname=") 
-                  + strlen(db_name) 
+                  + strlen(db_user) 
                   + strlen(db_password) 
                   + strlen(db_name)
                   + 1];
