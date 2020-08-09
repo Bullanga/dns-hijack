@@ -35,10 +35,8 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
       }
     }
 
-
 		if (ip[0] == '\x00') {
 			generate_failure_response(request, master_socket, client_addr, client_len);
-    }
     else
       generate_success_response(request, ip, comment, master_socket, client_addr, client_len);
 }
