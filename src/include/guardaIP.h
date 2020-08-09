@@ -2,9 +2,6 @@
 #ifndef guardaIP_H
 #define guardaIP_H 
 
-int r_length;
-int* registry;
-
 //Es detallen les funcions de l'interficie a continuació
 
 //Inicialitza l'estructura ip_ini ha de ser la constant IP_INI.
@@ -21,6 +18,8 @@ int r_get_length();
 
 //afegeix una ip a les ips registrades. Retorna l'index al vector.
 int r_add(const char* ip);
+
+int* r_get_registry ();
 
 #endif
 
