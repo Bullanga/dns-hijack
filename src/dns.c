@@ -112,6 +112,9 @@ void handler(int sig) {
 
 // Captive portal setup
 void captive_portal_init() {
+  //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
+	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
+
   // SIGUSR1 -> New ip registered and needs to be added
   // SIGUSR2 -> Ip list must be cleared
   signal(SIGUSR1, handler);
@@ -125,8 +128,6 @@ void captive_portal_init() {
 }
 
 int main(int argc, char * argv[]) {
-  //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
-	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
 
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
