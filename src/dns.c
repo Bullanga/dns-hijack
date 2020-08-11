@@ -139,10 +139,9 @@ int main(int argc, char * argv[]) {
   int master_socket;
 
   struct sockaddr_in address; // address del servidor
-  struct sockaddr client_addr;
 
-  Packet Request;
-  int RequestLen;
+  Packet packet;
+  int msgLen;
 
   // creem el master socket
   if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
@@ -174,12 +173,12 @@ int main(int argc, char * argv[]) {
 
   while (1) {
 
-    socklen_t client_len = sizeof(client_addr);
-    RequestLen = recvfrom(master_socket, & Request, sizeof(Request), 0, & client_addr, &client_len);
+    socklen_t client_len = sizeof(packet.client_addr);
+    msgLen = recvfrom(master_socket, & (packet.msg), sizeof(packet.msg), 0, &(packet.client_addr), &client_len);
     // considerem tamany minim del paacket 12 bytes
 
 
-    if (RequestLen >= 12) {
+    if (msgLen >= 12) {
       if (num_forks < max_forks) {
         num_forks++;
         int p = fork();
@@ -194,7 +193,7 @@ int main(int argc, char * argv[]) {
         }
       } else {
 
-	  		process(Request,  master_socket, client_addr, client_len);
+	  		process(&(packet.msg),  master_socket, packet.client_addr, client_len);
       
 			}
 

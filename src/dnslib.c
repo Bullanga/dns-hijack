@@ -8,20 +8,20 @@
 #include "dns_types.h"
 #include "dnslib.h"
 
-void generate_success_response(Message request, const char *ip, const char *comment, int master_socket, struct sockaddr client_addr, int client_len){
+void generate_success_response(Message *request, const char *ip, const char *comment, int master_socket, struct sockaddr client_addr, int client_len){
       
       Message reply;
       // tractem el packet; generem el packet de resposta
       memset(&reply,0,sizeof(reply));
       
-      reply.header.ID = request.header.ID;
+      reply.header.ID = request->header.ID;
       // Assumim error i posem el flac de authoritive reply
       reply.header.Rcode = RCODE_SERVER_ERROR;
       reply.header.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int replyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (request.header.Flags & FLAG_REPLY) == 0) 
+      if( (request->header.Flags & FLAG_REPLY) == 0) 
       {
 
 //        write(1,"ENTRO!\n",7);
@@ -33,10 +33,10 @@ void generate_success_response(Message request, const char *ip, const char *comm
         
 
         // store hostname
-        reply.header.Data[len] = (int) request.header.Data[len];
+        reply.header.Data[len] = (int) request->header.Data[len];
         ++len;
-        memcpy(reply.header.Data+len,&request.header.Data[len],strlen(&request.header.Data[len]));
-        len += strlen(&request.header.Data[len]);
+        memcpy(reply.header.Data+len,&request->header.Data[len],strlen(&request->header.Data[len]));
+        len += strlen(&request->header.Data[len]);
         len++;
         // set upper byte of TYPE
         reply.header.Data[len++] = (TYPE_A/256)&0xff;
@@ -103,20 +103,20 @@ void generate_success_response(Message request, const char *ip, const char *comm
 
 }
 
-void generate_failure_response(Message request,  int master_socket, struct sockaddr client_addr, int client_len){
+void generate_failure_response(Message *request,  int master_socket, struct sockaddr client_addr, int client_len){
 
       Message reply;
       // tractem el packet; generem el packet de resposta
       memset(&reply,0,sizeof(reply));
       
-      reply.header.ID = request.header.ID;
+      reply.header.ID = request->header.ID;
       // Assumim error i posem el flac de authoritive reply
       reply.header.Rcode = RCODE_SERVER_ERROR;
       reply.header.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int replyLen = 12;
       // comprovem si podem tractar la peticio
-      if( (request.header.Flags & FLAG_REPLY) == 0) 
+      if( (request->header.Flags & FLAG_REPLY) == 0) 
       {
 
         reply.header.Rcode = RCODE_NXDOMAIN;
@@ -132,9 +132,12 @@ void generate_failure_response(Message request,  int master_socket, struct socka
 
 }
 
-unsigned int parse_requested_domain(char *target, char *data) {
+unsigned int parse_requested_domain(Message *message) {
 	
+  char *target = message->question.QNAME;
+  char *data = message->header.Data;
 	memset(target,0,16);
+
 	int i = 1;
 	int dot = (int) data[0];
 	while( dot > 0) {

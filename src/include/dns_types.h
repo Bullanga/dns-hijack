@@ -100,7 +100,7 @@ typedef struct {
 } Header;
 
 typedef struct {
-  char      *QNAME;
+  char      QNAME[256];
   uint16_t  *QTYPE;
   uint16_t  *QCLASS;
 
@@ -113,7 +113,7 @@ typedef struct {
 
 typedef struct {
   Header header;
-  //Question question;
+  Question question;
   //Answer answer;
 } Message;
 

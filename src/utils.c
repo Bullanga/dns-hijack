@@ -6,11 +6,12 @@
 #include "guardaIP.h"
 #include "utils.h"
 
+#include <stdio.h>
+
 // Takes almost everithing as a parameter...
 // 1. Parses from the raw packed
-void process (Message request, int master_socket, struct sockaddr client_addr, socklen_t client_len )
+void process (Message *request, int master_socket, struct sockaddr client_addr, socklen_t client_len )
 {
-		char req_domain[256];
 		char client_ip[16];
 		char ip[16];		
 		int privat;
@@ -18,10 +19,11 @@ void process (Message request, int master_socket, struct sockaddr client_addr, s
 
     ip[0] = '\x00';
 
-    type = parse_requested_domain(req_domain, request.header.Data);
+
+    type = parse_requested_domain(request);
     parse_client_ip(client_ip, &client_addr);
 
-		privat = resolve_query(ip, req_domain, type);
+		privat = resolve_query(ip, request->question.QNAME, type);
 
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
