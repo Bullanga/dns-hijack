@@ -18,7 +18,7 @@ void process (Packet request, int master_socket, const struct sockaddr client_ad
 
     ip[0] = '\x00';
 
-    type = parse_requested_domain(req_domain, request.Data);
+    type = parse_requested_domain(req_domain, request.header.Data);
     parse_client_ip(client_ip, &client_addr);
 
 		privat = resolve_query(ip, req_domain, type);

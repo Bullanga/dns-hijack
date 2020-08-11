@@ -85,9 +85,7 @@ enum TYPE
   };
 typedef enum TYPE TYPE;
 
-
-struct Packet /* request/reply */
-  {
+struct Header{
   uint16_t  ID;       /*  session serial number  */
   uint8_t   Flags;    /*  see FLAGs */
   uint8_t   Rcode;    /*  see RCODE */
@@ -98,9 +96,31 @@ struct Packet /* request/reply */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
   char      Data[500]; 	/* data */
-  };
-typedef struct Packet Packet;
+};
 
+struct Question {
+  char      *QNAME;
+  uint16_t  *QTYPE;
+  uint16_t  *QCLASS;
+
+  char      raw[500-16*6];
+};
+
+//struct Answer {
+//  RR *RRs;
+//};
+
+typedef struct Packet /* request/reply */
+{
+  struct Header header;
+  //Question question;
+  //Answer answer;
+} Packet;
+
+//struct Packet {
+//  struct in_addr;
+//  struct Message msg;
+//}
 /*** Flags for DNS header.  OR these together. ***/
 #define FLAG_REPLY 0x80     /* is this a query or reply?
 			       0=query, 1=reply */
