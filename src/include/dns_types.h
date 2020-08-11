@@ -2,6 +2,7 @@
 #define _TYPES_H
 #include <stdlib.h>
 #include <stdint.h>
+#include <arpa/inet.h>
 /*
                         HEADER QUERY / RESPONSE DNS
       
@@ -85,7 +86,7 @@ enum TYPE
   };
 typedef enum TYPE TYPE;
 
-struct Header{
+typedef struct {
   uint16_t  ID;       /*  session serial number  */
   uint8_t   Flags;    /*  see FLAGs */
   uint8_t   Rcode;    /*  see RCODE */
@@ -96,31 +97,31 @@ struct Header{
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
   char      Data[500]; 	/* data */
-};
+} Header;
 
-struct Question {
+typedef struct {
   char      *QNAME;
   uint16_t  *QTYPE;
   uint16_t  *QCLASS;
 
   char      raw[500-16*6];
-};
+} Question;
 
 //struct Answer {
 //  RR *RRs;
 //};
 
-typedef struct Packet /* request/reply */
-{
-  struct Header header;
+typedef struct {
+  Header header;
   //Question question;
   //Answer answer;
+} Message;
+
+typedef struct {
+  struct sockaddr client_addr;
+  Message msg;
 } Packet;
 
-//struct Packet {
-//  struct in_addr;
-//  struct Message msg;
-//}
 /*** Flags for DNS header.  OR these together. ***/
 #define FLAG_REPLY 0x80     /* is this a query or reply?
 			       0=query, 1=reply */
