@@ -8,9 +8,9 @@
 #include "dns_types.h"
 #include "dnslib.h"
 
-void generate_success_response(Packet request, const char *ip, const char *comment, int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_success_response(Message request, const char *ip, const char *comment, int master_socket, struct sockaddr client_addr, int client_len){
       
-      Packet reply;
+      Message reply;
       // tractem el packet; generem el packet de resposta
       memset(&reply,0,sizeof(reply));
       
@@ -103,9 +103,9 @@ void generate_success_response(Packet request, const char *ip, const char *comme
 
 }
 
-void generate_failure_response(Packet request,  int master_socket, const struct sockaddr client_addr, int client_len){
+void generate_failure_response(Message request,  int master_socket, struct sockaddr client_addr, int client_len){
 
-      Packet reply;
+      Message reply;
       // tractem el packet; generem el packet de resposta
       memset(&reply,0,sizeof(reply));
       
