@@ -149,6 +149,8 @@ void parse_requested_domain(Message *message) {
 
 	}
 	target[i-2] = '\x00';
+
+  message->question.QTYPE = (uint16_t *) &data[++i];
 }
 
 void parse_client_ip(char *target, const struct sockaddr *client) {

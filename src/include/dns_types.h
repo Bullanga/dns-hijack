@@ -140,8 +140,6 @@ typedef struct {
   char      QNAME[256];
   uint16_t  *QTYPE;
   uint16_t  *QCLASS;
-
-  char      raw[500-16*6];
 } Question;
 
 typedef struct {

@@ -69,11 +69,10 @@ void handler(int sig) {
 
 int main(int argc, char * argv[]) {
 
+  init_inite();
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
 
-  // Captive portal setup. 
-  init_inite();
 
   int opt = 1; // TRUE
   int master_socket;
@@ -108,15 +107,12 @@ int main(int argc, char * argv[]) {
     exit(EXIT_FAILURE);
   }
   puts("Socket listening on 0.0.0.0:53");
-	
-
 
   while (1) {
 
     socklen_t client_len = sizeof(packet.client_addr);
     msgLen = recvfrom(master_socket, & (packet.msg), sizeof(packet.msg), 0, &(packet.client_addr), &client_len);
     // considerem tamany minim del paacket 12 bytes
-
 
     if (msgLen >= 12) {
       if (num_forks < max_forks) {
@@ -128,7 +124,6 @@ int main(int argc, char * argv[]) {
         }
         if (p == 0) {
 					// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
-          //generate_success_response( Request, public_ip, comment, master_socket, client_addr, client_len);
           exit(0);
         }
       } else {
@@ -138,17 +133,12 @@ int main(int argc, char * argv[]) {
 
 	  		exec_inite(&packet);
 
-        if (packet.msg.answer.rr == NULL) {
+        if (packet.msg.answer.rr == NULL) 
           generate_failure_response(&(packet.msg), master_socket, packet.client_addr, client_len);
-        }
-        else {
+        else 
           generate_success_response(&(packet.msg), packet.msg.answer.rr->ip, comment, master_socket, packet.client_addr, client_len);
-        }
-      
+        
 			}
-
     }
-
   }
-
 }
