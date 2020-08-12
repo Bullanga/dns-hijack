@@ -4,7 +4,7 @@
 #include "variables.h"
 #include "dnslib.h"
 #include "guardaIP.h"
-#include "utils.h"
+#include "mod_inite.h"
 
 #include <stdio.h>
 

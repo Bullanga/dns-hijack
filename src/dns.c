@@ -18,10 +18,9 @@
 #include <libpq-fe.h>
 
 #include "dns_types.h"
-#include "utils.h"
 #include "config.h"
-#include "utils.h"
 #include "guardaIP.h"
+#include "mod_inite.h"
 #include "dnslib.h"
 
 // Captive portal definition

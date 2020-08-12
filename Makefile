@@ -20,7 +20,7 @@ T_SRC_DIR=$(TESTS_DIR)/src
 ## Include dels tests
 T_INCLUDE=$(T_SRC_DIR)/include
 
-SRC= dns.c dnslib.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
+SRC= dns.c dnslib.c mod_inite.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
 
 SRC_TEST= guardaIP.c dnslib.c  #fitxers que es testejen 
 
