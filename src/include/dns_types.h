@@ -86,42 +86,6 @@ enum TYPE
   };
 typedef enum TYPE TYPE;
 
-typedef struct {
-  uint16_t  ID;       /*  session serial number  */
-  uint8_t   Flags;    /*  see FLAGs */
-  uint8_t   Rcode;    /*  see RCODE */
-  uint16_t  Qcount;   /*  # entries in the question section  */
-  uint16_t  Acount;   /*  # entries in the answer section  */
-  uint16_t  NScount;  /*  # name server records in authority section */
-  uint16_t  ARcount; 	/* # resource records in additional records section */
-  /* NOTE: MTU for UDP is 512 bytes.
-     512 bytes - header = 500 data bytes */
-  char      Data[500]; 	/* data */
-} Header;
-
-typedef struct {
-  char      QNAME[256];
-  uint16_t  *QTYPE;
-  uint16_t  *QCLASS;
-
-  char      raw[500-16*6];
-} Question;
-
-//struct Answer {
-//  RR *RRs;
-//};
-
-typedef struct {
-  Header header;
-  Question question;
-  //Answer answer;
-} Message;
-
-typedef struct {
-  struct sockaddr client_addr;
-  Message msg;
-} Packet;
-
 /*** Flags for DNS header.  OR these together. ***/
 #define FLAG_REPLY 0x80     /* is this a query or reply?
 			       0=query, 1=reply */
@@ -158,5 +122,41 @@ typedef struct {
   const  int   privat;
   const  char  *ip;
 } RR;
+
+typedef struct {
+  uint16_t  ID;       /*  session serial number  */
+  uint8_t   Flags;    /*  see FLAGs */
+  uint8_t   Rcode;    /*  see RCODE */
+  uint16_t  Qcount;   /*  # entries in the question section  */
+  uint16_t  Acount;   /*  # entries in the answer section  */
+  uint16_t  NScount;  /*  # name server records in authority section */
+  uint16_t  ARcount; 	/* # resource records in additional records section */
+  /* NOTE: MTU for UDP is 512 bytes.
+     512 bytes - header = 500 data bytes */
+  char      Data[500]; 	/* data */
+} Header;
+
+typedef struct {
+  char      QNAME[256];
+  uint16_t  *QTYPE;
+  uint16_t  *QCLASS;
+
+  char      raw[500-16*6];
+} Question;
+
+typedef struct {
+  RR *rr;
+} Answer;
+
+typedef struct {
+  Header    header;
+  Question  question;
+  Answer    answer;
+} Message;
+
+typedef struct {
+  struct  sockaddr client_addr;
+  Message msg;
+} Packet;
 
 #endif
