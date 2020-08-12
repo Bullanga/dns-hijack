@@ -13,12 +13,11 @@
 void process (Message *message, int master_socket, struct sockaddr client_addr, socklen_t client_len )
 {
 		char client_ip[16];
-		int privat;
 
     parse_requested_domain(message);
     parse_client_ip(client_ip, &client_addr);
 
-		privat = resolve_query(message);
+		resolve_query(message);
 
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
@@ -53,7 +52,7 @@ int registered(char ip[16])
  *  	ip -> buffer to store the ip corresponding req_domain, NULL if not in resource records
  * 		@return -> 1 if its a private domain, 0 if not
  */
-int resolve_query(Message *message)
+void resolve_query(Message *message)
 {
   RR *rr;
   rr = (RR *) &records;
@@ -63,9 +62,7 @@ int resolve_query(Message *message)
 		if(0 == strcmp(message->question.QNAME, rr->domain))
 		{
       message->answer.rr = rr;
-			return rr->privat;			
 		}
     rr++;
 	}
-	return 0;
 }
