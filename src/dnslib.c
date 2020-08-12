@@ -132,7 +132,7 @@ void generate_failure_response(Message *request,  int master_socket, struct sock
 
 }
 
-unsigned int parse_requested_domain(Message *message) {
+void parse_requested_domain(Message *message) {
 	
   char *target = message->question.QNAME;
   char *data = message->header.Data;
@@ -149,9 +149,6 @@ unsigned int parse_requested_domain(Message *message) {
 
 	}
 	target[i-2] = '\x00';
-	
-	return (uint16_t)data[++i];
-
 }
 
 void parse_client_ip(char *target, const struct sockaddr *client) {

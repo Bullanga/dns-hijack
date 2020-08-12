@@ -9,7 +9,7 @@
 void generate_failure_response(Message *request, int master_socket, struct sockaddr client_addr, int client_len);
 void generate_success_response(Message *request, const char *ip, const char *comment, int master_socket, struct sockaddr client_addr, int client_len);
 void parse_client_ip(char *target, const struct sockaddr *client);
-unsigned int parse_requested_domain(Message *message);
+void parse_requested_domain(Message *message);
 
 
 
