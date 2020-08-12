@@ -158,3 +158,18 @@ void parse_client_ip(char *target, const struct sockaddr *client) {
 	memcpy(target,ip,strlen(ip));
 
 }
+
+void resolve_query(Message *message, const RR *records, int records_size)
+{
+  RR *rr;
+  rr = (RR *) records;
+  message->answer.rr = NULL;
+	for(int i = 0; i < records_size; i++)
+	{
+		if(0 == strcmp(message->question.QNAME, rr->domain))
+		{
+      message->answer.rr = rr;
+		}
+    rr++;
+	}
+}

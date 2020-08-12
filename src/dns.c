@@ -134,7 +134,7 @@ int main(int argc, char * argv[]) {
       } else {
 
         parse_requested_domain(& (packet.msg));
-        resolve_query(& (packet.msg));
+        resolve_query(& (packet.msg), records, RECORDS_SIZE);
 
 	  		exec_inite(&packet);
 

@@ -17,9 +17,11 @@
 
 #define STACK_SIZE (1024 * 1024)    /* Stack size for cloned child */
 
-char *getLastIPRegistered();
-int  ipListUpdate();
-void cloneUpdatesIpList();
+// Internal definitions
+char  *getLastIPRegistered();
+int   ipListUpdate();
+void  cloneUpdatesIpList();
+int   registered(char *ip);
 
 // Captive portal
 int ipListUpdate() {
@@ -50,6 +52,12 @@ void cloneUpdatesIpList() {
 
 void clearIpList() {
     r_clear(); 
+}
+
+//check si la ip està registrada
+int registered(char ip[16])
+{
+    return r_findValue(ip);
 }
 
 // Captive portal setup
@@ -89,31 +97,4 @@ void exec_inite (Packet *packet)
         message->answer.rr = &false_RR;
       }
     }
-
-
-}
-
-//check si la ip està registrada
-int registered(char ip[16])
-{
-    return r_findValue(ip);
-}
-
-/*
- *  	ip -> buffer to store the ip corresponding req_domain, NULL if not in resource records
- * 		@return -> 1 if its a private domain, 0 if not
- */
-void resolve_query(Message *message)
-{
-  RR *rr;
-  rr = (RR *) &records;
-  message->answer.rr = NULL;
-	for(int i = 0; i < RECORDS_SIZE; i++)
-	{
-		if(0 == strcmp(message->question.QNAME, rr->domain))
-		{
-      message->answer.rr = rr;
-		}
-    rr++;
-	}
 }
