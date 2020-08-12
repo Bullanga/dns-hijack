@@ -29,8 +29,8 @@ TEST_FRAMEWORK= tests/src/include/munit
 OBJ=${SRC:.c=.o}
 OBJ_TEST=${SRC_TEST:.c=.o}
 
-CFLAGS= -Wall -std=c99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
-CFLAGS_TEST= -Wall -std=c99 -ggdb -I $(INCLUDE) -I $(T_INCLUDE) -I /usr/include/postgresql
+CFLAGS= -Wall -std=gnu99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
+CFLAGS_TEST= -Wall -std=gnu99 -ggdb -I $(INCLUDE) -I $(T_INCLUDE) -I /usr/include/postgresql
 CC=gcc
 
 #### FITXERS DEL CODI ####
