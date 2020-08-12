@@ -22,6 +22,7 @@
 #include "config.h"
 #include "utils.h"
 #include "guardaIP.h"
+#include "dnslib.h"
 
 // Captive portal definition
 #define STACK_SIZE (1024 * 1024)    /* Stack size for cloned child */
@@ -193,7 +194,17 @@ int main(int argc, char * argv[]) {
         }
       } else {
 
-	  		process(&(packet.msg),  master_socket, packet.client_addr, client_len);
+        parse_requested_domain(& (packet.msg));
+        resolve_query(& (packet.msg));
+
+	  		exec_inite(&packet);
+
+        if (packet.msg.answer.rr == NULL) {
+          generate_failure_response(&(packet.msg), master_socket, packet.client_addr, client_len);
+        }
+        else {
+          generate_success_response(&(packet.msg), packet.msg.answer.rr->ip, comment, master_socket, packet.client_addr, client_len);
+        }
       
 			}
 

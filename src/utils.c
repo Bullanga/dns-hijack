@@ -10,15 +10,13 @@
 
 // Takes almost everithing as a parameter...
 // 1. Parses from the raw packed
-void process (Message *message, int master_socket, struct sockaddr client_addr, socklen_t client_len )
+void exec_inite (Packet *packet)
 {
 		char client_ip[16];
+    Message *message = &(packet->msg);
 
-    parse_requested_domain(message);
-    parse_client_ip(client_ip, &client_addr);
 
-		resolve_query(message);
-
+    parse_client_ip(client_ip, &(packet->client_addr));
   	if (use_inite) {
       // Si no esta registrat pots fer dues coses:
       //  - Resoldre al host d'inite 
@@ -34,12 +32,6 @@ void process (Message *message, int master_socket, struct sockaddr client_addr, 
     }
 
 
-		if (message->answer.rr == NULL) {
-			generate_failure_response(message, master_socket, client_addr, client_len);
-    }
-    else {
-      generate_success_response(message, message->answer.rr->ip, comment, master_socket, client_addr, client_len);
-    }
 }
 
 //check si la ip està registrada
