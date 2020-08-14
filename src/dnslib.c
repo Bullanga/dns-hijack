@@ -33,61 +33,61 @@ void generate_success_response(Message *request, const char *ip, const char *com
         
 
         // store hostname
-        reply.header.Data[len] = (int) request->header.Data[len];
+        reply.raw_body[len] = (int) request->raw_body[len];
         ++len;
-        memcpy(reply.header.Data+len,&request->header.Data[len],strlen(&request->header.Data[len]));
-        len += strlen(&request->header.Data[len]);
+        memcpy(reply.raw_body+len,&request->raw_body[len],strlen(&request->raw_body[len]));
+        len += strlen(&request->raw_body[len]);
         len++;
         // set upper byte of TYPE
-        reply.header.Data[len++] = (TYPE_A/256)&0xff;
+        reply.raw_body[len++] = (TYPE_A/256)&0xff;
         // set lower byte of TYPE
-        reply.header.Data[len++] = (TYPE_A)&0xff;
+        reply.raw_body[len++] = (TYPE_A)&0xff;
 
         // set CLASS
-        reply.header.Data[len++] = (CLASS_IN/256)&0xff;
-        reply.header.Data[len++] = (CLASS_IN)&0xff;
+        reply.raw_body[len++] = (CLASS_IN/256)&0xff;
+        reply.raw_body[len++] = (CLASS_IN)&0xff;
     
         // set TTL (4 bytes) a 10 s
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 10;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 10;
   
         // set data length
-        reply.header.Data[len++] =0;
-        reply.header.Data[len++] =4;
+        reply.raw_body[len++] =0;
+        reply.raw_body[len++] =4;
        
 
         int ipAddr = ntohl(inet_addr(ip));
-        reply.header.Data[len++] = (ipAddr >> 24) & 0xff;
-        reply.header.Data[len++] = (ipAddr >> 16) & 0xff;
-        reply.header.Data[len++] = (ipAddr >> 8)  & 0xff;
-        reply.header.Data[len++] = (ipAddr)       & 0xff;
+        reply.raw_body[len++] = (ipAddr >> 24) & 0xff;
+        reply.raw_body[len++] = (ipAddr >> 16) & 0xff;
+        reply.raw_body[len++] = (ipAddr >> 8)  & 0xff;
+        reply.raw_body[len++] = (ipAddr)       & 0xff;
       
 
         // Resposta 2: hostname i TXT
-        reply.header.Data[len++] = 0xc0; // punter
-        reply.header.Data[len++] = 0x0c; // punter al nom (inici de data)
+        reply.raw_body[len++] = 0xc0; // punter
+        reply.raw_body[len++] = 0x0c; // punter al nom (inici de data)
         
         // set upper byte of TYPE
-        reply.header.Data[len++] = (TYPE_TXT/256) & 0xff;
+        reply.raw_body[len++] = (TYPE_TXT/256) & 0xff;
         // set lower byte of TYPE
-        reply.header.Data[len++] = (TYPE_TXT)     & 0xff;
+        reply.raw_body[len++] = (TYPE_TXT)     & 0xff;
 
         // set CLASS
-        reply.header.Data[len++] = (CLASS_IN/256) & 0xff;
-        reply.header.Data[len++] = (CLASS_IN)     & 0xff;
+        reply.raw_body[len++] = (CLASS_IN/256) & 0xff;
+        reply.raw_body[len++] = (CLASS_IN)     & 0xff;
 
         // set TTL (4 bytes) a 10 s
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 0;
-        reply.header.Data[len++] = 10;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 0;
+        reply.raw_body[len++] = 10;
 
-        reply.header.Data[len++] = 0;
-	      reply.header.Data[len++] = strlen(comment)+1;
-	      reply.header.Data[len++] = strlen(comment);
-	      memcpy(reply.header.Data+len,comment,strlen(comment));
+        reply.raw_body[len++] = 0;
+	      reply.raw_body[len++] = strlen(comment)+1;
+	      reply.raw_body[len++] = strlen(comment);
+	      memcpy(reply.raw_body+len,comment,strlen(comment));
       	len += strlen(comment);
 
       	replyLen += len; /* total size oof packet */
@@ -132,25 +132,26 @@ void generate_failure_response(Message *request,  int master_socket, struct sock
 
 }
 
-void parse_requested_domain(Message *message) {
+void parse_message_raw_body(Message *message) {
 	
-  char *target = message->question.QNAME;
-  char *data = message->header.Data;
-	memset(target,0,16);
+  char *QNAME = message->question.QNAME;
+  char *raw_data = message->raw_body;
+	memset(QNAME,0, sizeof(message->question.QNAME));
 
+  //Parse QNAME
 	int i = 1;
-	int dot = (int) data[0];
+	int dot = (int) raw_data[0];
 	while( dot > 0) {
-
-	strncat(target, &data[i], dot);
-	strcat(target, ".");
-	i += dot;	
-	dot = (int) data[i++];
-
+    strncat(QNAME, &raw_data[i], dot);
+    strcat(QNAME, ".");
+    i += dot;	
+    dot = (int) raw_data[i++];
 	}
-	target[i-2] = '\x00';
+	QNAME[i-2] = '\x00';
 
-  message->question.QTYPE = (uint16_t *) &data[++i];
+  message->question.QTYPE   =  (uint16_t  *)  &raw_data[++i];
+  message->question.QCLASS  =  (uint16_t  *)  &raw_data[++i];
+  message->answer.rr        =  (RR *)         &raw_data[++i];
 }
 
 void parse_client_ip(char *target, const struct sockaddr *client) {
