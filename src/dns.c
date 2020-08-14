@@ -20,15 +20,15 @@
 
 int num_forks = 0;
 
-void init_modules() {
+void modules_initialization() {
   #if USE_INITE
-    init_inite();
+    inite_initialization();
   #endif
 }
 
-void exec_modules(Packet *packet) {
+void modules_execute(Packet *packet) {
   #if USE_INITE
-    exec_inite(packet);
+    inite_execute(packet);
   #endif
 }
 
@@ -41,7 +41,7 @@ void handler(int sig) {
 
 int main(int argc, char * argv[]) {
 
-  init_modules();
+  modules_initialization();
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
 
@@ -101,7 +101,7 @@ int main(int argc, char * argv[]) {
 
         resolve_query(& (packet.msg), records, RECORDS_SIZE);
 
-	  		exec_modules(&packet);
+	  		modules_execute(&packet);
 
         if (packet.msg.answer.rr == NULL) 
           generate_failure_response(&(packet.msg), master_socket, packet.client_addr, client_len);

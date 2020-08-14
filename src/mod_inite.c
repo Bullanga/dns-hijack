@@ -101,7 +101,7 @@ int registered(char ip[16])
 }
 
 // Captive portal setup
-void init_inite() {
+void inite_initialization() {
   //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
 	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
 
@@ -117,7 +117,7 @@ void init_inite() {
   fclose(fp);
 }
 
-void exec_inite (Packet *packet)
+void inite_execute (Packet *packet)
 {
 		char client_ip[16];
     Message *message = &(packet->msg);
