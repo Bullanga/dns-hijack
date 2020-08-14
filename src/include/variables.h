@@ -13,7 +13,6 @@ extern  const  char         dhcp_ip_range[2][16];
 // Inite stuff
 #define BLOCK_TARGET "0.0.0.0"
 
-extern const unsigned int use_inite;
 extern const char inite_host[16];
 extern const  char*  db_user;
 extern const  char*  db_password;

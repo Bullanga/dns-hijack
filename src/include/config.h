@@ -18,13 +18,13 @@
 const unsigned int max_forks =  0;
 
 /*
- *  INITE config
-*	  `use_inite` can have only two differents values:
+ *  To enable INITE set the USE_INITE 
+*	  `USE_INITE` can have only two differents values:
 *
 * 		0	: The web portal INITE is NOT in use
 * 		1	: The web portal INITE is in use
  */
-const unsigned int use_inite = 1;
+#define USE_INITE 1
 const  char  inite_host[16]        =  "192.168.1.35";
 const  char  dhcp_ip_range[2][16]  =  {"192.168.2.1",  "192.168.2.200"};
 const  char*  db_user      =  "u_dks";

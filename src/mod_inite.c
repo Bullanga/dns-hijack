@@ -122,19 +122,17 @@ void exec_inite (Packet *packet)
 		char client_ip[16];
     Message *message = &(packet->msg);
 
-
     parse_client_ip(client_ip, &(packet->client_addr));
-  	if (use_inite) {
-      // Si no esta registrat pots fer dues coses:
-      //  - Resoldre al host d'inite 
-      //  - Bloquejar la peticio si es privada.
-      if (!registered(client_ip)) {
-        false_RR.domain = message->question.QNAME;
-        if (message->answer.rr != NULL && message->answer.rr->privat) 
-          false_RR.ip = BLOCK_TARGET;
-        else
-          false_RR.ip = inite_host;
-        message->answer.rr = &false_RR;
-      }
+
+    // Si no esta registrat pots fer dues coses:
+    //  - Resoldre al host d'inite 
+    //  - Bloquejar la peticio si es privada.
+    if (!registered(client_ip)) {
+      false_RR.domain = message->question.QNAME;
+      if (message->answer.rr != NULL && message->answer.rr->privat) 
+        false_RR.ip = BLOCK_TARGET;
+      else
+        false_RR.ip = inite_host;
+      message->answer.rr = &false_RR;
     }
 }
