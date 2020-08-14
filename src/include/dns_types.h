@@ -133,7 +133,6 @@ typedef struct {
   uint16_t  ARcount; 	/* # resource records in additional records section */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
-  char      Data[500]; 	/* data */
 } Header;
 
 typedef struct {
@@ -148,6 +147,7 @@ typedef struct {
 
 typedef struct {
   Header    header;
+  char      raw_body[500]; 	/* data */
   Question  question;
   Answer    answer;
 } Message;
