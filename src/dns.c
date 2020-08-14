@@ -58,10 +58,10 @@ int main(int argc, char * argv[]) {
   Packet  packet;
   int     msgLen;
   int     master_socket;
-  int     opt = 1;            //  master_socket  option
-  struct sockaddr_in address; // address del servidor
+  int     master_socket_opt = 1;            
+  struct  sockaddr_in address; // address del servidor
 
-  get_multiclient_single_thread_socket(& master_socket, opt);
+  get_multiclient_single_thread_socket(& master_socket, master_socket_opt);
   signal(SIGCHLD, handler);
 
   // Tipus de socket creat
