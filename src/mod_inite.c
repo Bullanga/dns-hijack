@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <signal.h>
 #include <sched.h>
+#include <libpq-fe.h>
 
 #include "dns_types.h"
 #include "variables.h"
@@ -22,6 +23,45 @@ char  *getLastIPRegistered();
 int   ipListUpdate();
 void  cloneUpdatesIpList();
 int   registered(char *ip);
+
+// Captive portal 
+// Return, in string human readable format, the most resent ip registered to a postgresql database
+char* getLastIPRegistered() {
+  char *ret_val;
+  char credentials[strlen("user= password= dbname=") 
+                  + strlen(db_user) 
+                  + strlen(db_password) 
+                  + strlen(db_name)
+                  + 1];
+
+  // Creates a postgresql connection with credentials from config.h
+  sprintf(credentials, "user=%s password=%s dbname=%s", db_user, db_password, db_name);
+  PGconn *conn = PQconnectdb(credentials);
+
+  // Checks db connection
+  if (PQstatus(conn) == CONNECTION_BAD) {
+      
+    fprintf(stderr, "Connection to database failed: %s\n",
+        PQerrorMessage(conn));
+        
+    PQfinish(conn);
+    exit(1);
+  }
+
+  // Execute query
+  PGresult *res = PQexec(conn, "select ip from portal_registre order by registrat desc limit 1");
+  
+  // Check content of response and stores it in return value
+  if (PQresultStatus(res) == PGRES_TUPLES_OK) {
+    ret_val = PQgetvalue(res, 0, 0);
+  }
+
+  // Clean and finish db connection
+  PQclear(res);
+  PQfinish(conn);
+
+  return ret_val;
+}
 
 // Captive portal
 int ipListUpdate() {

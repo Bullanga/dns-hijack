@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <libpq-fe.h>
 
 #include "dns_types.h"
 #include "config.h"
@@ -21,44 +20,6 @@
 
 int num_forks = 0;
 
-// Captive portal 
-// Return, in string human readable format, the most resent ip registered to a postgresql database
-char* getLastIPRegistered() {
-  char *ret_val;
-  char credentials[strlen("user= password= dbname=") 
-                  + strlen(db_user) 
-                  + strlen(db_password) 
-                  + strlen(db_name)
-                  + 1];
-
-  // Creates a postgresql connection with credentials from config.h
-  sprintf(credentials, "user=%s password=%s dbname=%s", db_user, db_password, db_name);
-  PGconn *conn = PQconnectdb(credentials);
-
-  // Checks db connection
-  if (PQstatus(conn) == CONNECTION_BAD) {
-      
-    fprintf(stderr, "Connection to database failed: %s\n",
-        PQerrorMessage(conn));
-        
-    PQfinish(conn);
-    exit(1);
-  }
-
-  // Execute query
-  PGresult *res = PQexec(conn, "select ip from portal_registre order by registrat desc limit 1");
-  
-  // Check content of response and stores it in return value
-  if (PQresultStatus(res) == PGRES_TUPLES_OK) {
-    ret_val = PQgetvalue(res, 0, 0);
-  }
-
-  // Clean and finish db connection
-  PQclear(res);
-  PQfinish(conn);
-
-  return ret_val;
-}
 
 void handler(int sig) {
   if (sig == SIGCHLD){
@@ -73,7 +34,6 @@ int main(int argc, char * argv[]) {
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
 
-
   int opt = 1; // TRUE
   int master_socket;
 
@@ -86,14 +46,12 @@ int main(int argc, char * argv[]) {
   if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("socket() -> Error");
     exit(EXIT_FAILURE);
-
   }
 
   // configurem el master socket per tractar multiples peticions
   if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char * ) & opt, sizeof(opt)) < 0) {
     perror("setsockopt() -> Error");
     exit(EXIT_FAILURE);
-
   }
 
   // tipus de socket creat
@@ -128,7 +86,8 @@ int main(int argc, char * argv[]) {
         }
       } else {
 
-        parse_requested_domain(& (packet.msg));
+        parse_message_raw_body(& (packet.msg));
+
         resolve_query(& (packet.msg), records, RECORDS_SIZE);
 
 	  		exec_inite(&packet);
