@@ -15,6 +15,9 @@ extern  const  char         dhcp_ip_range[2][16];
 
 extern const unsigned int use_inite;
 extern const char inite_host[16];
+extern const  char*  db_user;
+extern const  char*  db_password;
+extern const  char*  db_name;
 extern RR false_RR;
 
 #define IP_INI dhcp_ip_range[0]

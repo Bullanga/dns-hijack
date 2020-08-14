@@ -25,10 +25,8 @@ const unsigned int max_forks =  0;
 * 		1	: The web portal INITE is in use
  */
 const unsigned int use_inite = 1;
-
-const  char  dhcp_ip_range[2][16]  =  {"192.168.2.1",  "192.168.2.200"};
 const  char  inite_host[16]        =  "192.168.1.35";
-
+const  char  dhcp_ip_range[2][16]  =  {"192.168.2.1",  "192.168.2.200"};
 const  char*  db_user      =  "u_dks";
 const  char*  db_password  =  "YjBkNDcwNDdmZDE0YzM3MzEyMTY2YmUz";
 const  char*  db_name      =  "db_dks";
