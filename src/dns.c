@@ -42,6 +42,7 @@ void handler(int sig) {
 int main(int argc, char * argv[]) {
 
   modules_initialization();
+
   printf("max_forks=%d\n", max_forks);
   signal(SIGCHLD, handler);
 
