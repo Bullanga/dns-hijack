@@ -39,44 +39,46 @@ void handler(int sig) {
   } 
 }
 
-int main(int argc, char * argv[]) {
-
-  modules_initialization();
-
-  printf("max_forks=%d\n", max_forks);
-  signal(SIGCHLD, handler);
-
-  int opt = 1; // TRUE
-  int master_socket;
-
-  struct sockaddr_in address; // address del servidor
-
-  Packet packet;
-  int msgLen;
-
+void get_multiclient_single_thread_socket(int *master_socket, int opt) {
   // creem el master socket
-  if ((master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+  if ((*master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
     perror("socket() -> Error");
     exit(EXIT_FAILURE);
   }
 
   // configurem el master socket per tractar multiples peticions
-  if (setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char * ) & opt, sizeof(opt)) < 0) {
+  if (setsockopt(*master_socket, SOL_SOCKET, SO_REUSEADDR, (char * ) & opt, sizeof(opt)) < 0) {
     perror("setsockopt() -> Error");
     exit(EXIT_FAILURE);
   }
+}
 
-  // tipus de socket creat
-  address.sin_family = AF_INET; // IPv4
-  address.sin_addr.s_addr = INADDR_ANY; // 0.0.0.0
-  address.sin_port = htons(53);
+int main(int argc, char * argv[]) {
 
-  // binding del socket
+  Packet  packet;
+  int     msgLen;
+  int     master_socket;
+  int     opt = 1;            //  master_socket  option
+  struct sockaddr_in address; // address del servidor
+
+  get_multiclient_single_thread_socket(& master_socket, opt);
+  signal(SIGCHLD, handler);
+
+  // Tipus de socket creat
+  address.sin_family       =  AF_INET;     //  IPv4
+  address.sin_addr.s_addr  =  INADDR_ANY;  //  0.0.0.0
+  address.sin_port         =  htons(53);
+
+  printf("max_forks=%d\n", max_forks);
+
+  // Binding del socket
   if (bind(master_socket, (struct sockaddr * ) & address, sizeof(address)) < 0) {
     perror("bind() -> Error");
     exit(EXIT_FAILURE);
   }
   puts("Socket listening on 0.0.0.0:53");
+
+  modules_initialization();
 
   while (1) {
 
