@@ -16,7 +16,7 @@ void generate_success_response(Message *request, const char *ip, const char *com
       
       reply.header.ID = request->header.ID;
       // Assumim error i posem el flac de authoritive reply
-      reply.header.Rcode = RCODE_SERVER_ERROR;
+      reply.header.RCODE = RCODE_SERVER_ERROR;
       reply.header.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int replyLen = 12;
@@ -26,8 +26,8 @@ void generate_success_response(Message *request, const char *ip, const char *com
 
 //        write(1,"ENTRO!\n",7);
         int len = 0;
-        reply.header.Rcode  = RCODE_NO_ERROR;
-        reply.header.Acount = htons(2); // 2 respostes: hostname and TXT 
+        reply.header.RCODE  = RCODE_NO_ERROR;
+        reply.header.ANCOUNT = htons(2); // 2 respostes: hostname and TXT 
 
         // RESPOSTA 1: hostname
         
@@ -95,6 +95,8 @@ void generate_success_response(Message *request, const char *ip, const char *com
 
       }
       
+      printf("This is ANCOUNT of response = %u\n", reply.header.ANCOUNT);
+
       if( 0 > sendto(master_socket, &reply, replyLen, 0, &client_addr, client_len))
       {
         perror("sendto() -> Error");
@@ -111,7 +113,7 @@ void generate_failure_response(Message *request,  int master_socket, struct sock
       
       reply.header.ID = request->header.ID;
       // Assumim error i posem el flac de authoritive reply
-      reply.header.Rcode = RCODE_SERVER_ERROR;
+      reply.header.RCODE = RCODE_SERVER_ERROR;
       reply.header.Flags = FLAG_REPLY ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
 
       int replyLen = 12;
@@ -119,8 +121,8 @@ void generate_failure_response(Message *request,  int master_socket, struct sock
       if( (request->header.Flags & FLAG_REPLY) == 0) 
       {
 
-        reply.header.Rcode = RCODE_NXDOMAIN;
-        reply.header.Acount = htons(0); // 0 respostes  
+        reply.header.RCODE = RCODE_NXDOMAIN;
+        reply.header.ANCOUNT = htons(0); // 0 respostes  
 
 			}
 

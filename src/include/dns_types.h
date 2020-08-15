@@ -126,11 +126,11 @@ typedef struct {
 typedef struct {
   uint16_t  ID;       /*  session serial number  */
   uint8_t   Flags;    /*  see FLAGs */
-  uint8_t   Rcode;    /*  see RCODE */
-  uint16_t  Qcount;   /*  # entries in the question section  */
-  uint16_t  Acount;   /*  # entries in the answer section  */
-  uint16_t  NScount;  /*  # name server records in authority section */
-  uint16_t  ARcount; 	/* # resource records in additional records section */
+  uint8_t   RCODE;    /*  see RCODE */
+  uint16_t  QDCOUNT;   /*  # entries in the question section  */
+  uint16_t  ANCOUNT;   /*  # entries in the answer section  */
+  uint16_t  NSCOUNT;  /*  # name server records in authority section */
+  uint16_t  ARCOUNT; 	/* # resource records in additional records section */
   /* NOTE: MTU for UDP is 512 bytes.
      512 bytes - header = 500 data bytes */
 } Header;
