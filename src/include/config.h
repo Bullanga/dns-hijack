@@ -30,7 +30,7 @@ const  char  dhcp_ip_range[2][16]  =  {"192.168.2.1",  "192.168.2.200"};
 const  char*  db_user      =  "u_dks";
 const  char*  db_password  =  "YjBkNDcwNDdmZDE0YzM3MzEyMTY2YmUz";
 const  char*  db_name      =  "db_dks";
-RR false_RR = {.type = TYPE_A, .privat = 0, };
+RR false_RR = {.TYPE = TYPE_A, .privat = 0, };
 
 const char comment[] = "More info: https://github.com/dhap0/dns-hijack";
 
@@ -42,8 +42,8 @@ const int RECORDS_SIZE = 2;
 
 const RR records[] = {
   /*  domain            type  private  ip           */
-  {   "cpdvl-blau.vida",  TYPE_A,    0,       "192.168.1.42"  },
-  {   "wikipedia.dks",  TYPE_A,    1,       "127.0.0.1"  },
+  {   .NAME = "cpdvl-blau.vida",  .TYPE = TYPE_A,    .privat = 0,       .RDATA = "192.168.1.42"  },
+  {   .NAME = "wikipedia.dks",  .TYPE = TYPE_A,    .privat = 1,       .RDATA = "127.0.0.1"  },
 };
 
 #endif
