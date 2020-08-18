@@ -53,13 +53,27 @@ void get_multiclient_single_thread_socket(int *master_socket, int opt) {
   }
 }
 
+int RR_initialize(RR *records) {
+  int i;
+  RR *rr = records;
+  for (i = 0; i < RECORDS_SIZE; ++i) {
+    printf("one\n");
+    RR_populate_missing(rr);
+    RR_build_raw_big_endian(rr);
+    ++rr;
+  }
+  return 1;
+}
+
 int main(int argc, char * argv[]) {
 
   Packet  packet;
-  int     msgLen;
+  int     messageLen;
   int     master_socket;
   int     master_socket_opt = 1;            
   struct  sockaddr_in address; // address del servidor
+
+  RR_initialize(records);
 
   get_multiclient_single_thread_socket(& master_socket, master_socket_opt);
   signal(SIGCHLD, handler);
@@ -68,8 +82,6 @@ int main(int argc, char * argv[]) {
   address.sin_family       =  AF_INET;     //  IPv4
   address.sin_addr.s_addr  =  INADDR_ANY;  //  0.0.0.0
   address.sin_port         =  htons(53);
-
-  printf("max_forks=%d\n", max_forks);
 
   // Binding del socket
   if (bind(master_socket, (struct sockaddr * ) & address, sizeof(address)) < 0) {
@@ -83,35 +95,20 @@ int main(int argc, char * argv[]) {
   while (1) {
 
     socklen_t client_len = sizeof(packet.client_addr);
-    msgLen = recvfrom(master_socket, & (packet.msg), sizeof(packet.msg), 0, &(packet.client_addr), &client_len);
+    messageLen = recvfrom(master_socket, & (packet.message), sizeof(packet.message), 0, &(packet.client_addr), &client_len);
     // considerem tamany minim del paacket 12 bytes
 
-    if (msgLen >= 12) {
-      if (num_forks < max_forks) {
-        num_forks++;
-        int p = fork();
-        if (p < 0) {
-          perror("fork() -> Error");
-          exit(EXIT_FAILURE);
-        }
-        if (p == 0) {
-					// #### ATENCIO PERQUE CAL CANVIAR AIXÒ ####
-          exit(0);
-        }
-      } else {
+    if (messageLen >= 12) {
+      parse_message_raw_body(& (packet.message));
 
-        parse_message_raw_body(& (packet.msg));
+      resolve_query(& (packet.message), records, RECORDS_SIZE);
 
-        resolve_query(& (packet.msg), records, RECORDS_SIZE);
+      modules_execute(&packet);
 
-	  		modules_execute(&packet);
-
-        if (packet.msg.answer.rr == NULL) 
-          generate_failure_response(&(packet.msg), master_socket, packet.client_addr, client_len);
-        else 
-          generate_success_response(&(packet.msg), packet.msg.answer.rr->ip, comment, master_socket, packet.client_addr, client_len);
-        
-			}
+      if (packet.message.header.ANCOUNT) 
+        generate_success_response(&(packet.message), packet.message.answer.rr->RDATA, comment, master_socket, packet.client_addr, client_len);
+      else 
+        generate_failure_response(&(packet.message), master_socket, packet.client_addr, client_len);
     }
   }
 }
