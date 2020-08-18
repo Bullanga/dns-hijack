@@ -58,6 +58,41 @@
        21    BADALG    Algorithm not supported            
       ------------------------------------------------
 */
+#define  HEADER_QR_OFFSET      15
+#define  HEADER_Opcode_OFFSET  11
+#define  HEADER_AA_OFFSET      10
+#define  HEADER_TC_OFFSET      9
+#define  HEADER_RD_OFFSET      8
+#define  HEADER_RA_OFFSET      7
+#define  HEADER_Z_OFFSET       4
+#define  HEADER_RCODE_OFFSET   0
+
+#define  HEADER_QR_MASK      0x8000
+#define  HEADER_Opcode_MASK  0x7800
+#define  HEADER_AA_MASK      0x0400
+#define  HEADER_TC_MASK      0x0200
+#define  HEADER_RD_MASK      0x0100
+#define  HEADER_RA_MASK      0x0080
+#define  HEADER_Z_MASK       0x0070
+#define  HEADER_RCODE_MASK   0x000f
+
+#define  GET_HEADER_QR(FLAGS)      ((FLAGS  &  HEADER_QR_MASK)      >>  HEADER_QR_OFFSET)
+#define  GET_HEADER_Opcode(FLAGS)  ((FLAGS  &  HEADER_Opcode_MASK)  >>  HEADER_Opcode_OFFSET)
+#define  GET_HEADER_AA(FLAGS)      ((FLAGS  &  HEADER_AA_MASK)      >>  HEADER_AA_OFFSET)
+#define  GET_HEADER_TC(FLAGS)      ((FLAGS  &  HEADER_TC_MASK)      >>  HEADER_TC_OFFSET)
+#define  GET_HEADER_RD(FLAGS)      ((FLAGS  &  HEADER_RD_MASK)      >>  HEADER_RD_OFFSET)
+#define  GET_HEADER_RA(FLAGS)      ((FLAGS  &  HEADER_RA_MASK)      >>  HEADER_RA_OFFSET)
+#define  GET_HEADER_Z(FLAGS)       ((FLAGS  &  HEADER_Z_MASK)       >>  HEADER_Z_OFFSET)
+#define  GET_HEADER_RCODE(FLAGS)   ((FLAGS  &  HEADER_RCODE_MASK)   >>  HEADER_RCODE_OFFSET)
+
+#define  SET_HEADER_QR(FLAGS,QR)          FLAGS  =  (FLAGS  &  ~HEADER_QR_MASK)      |  (QR      <<  HEADER_QR_OFFSET)
+#define  SET_HEADER_Opcode(FLAGS,Opcode)  FLAGS  =  (FLAGS  &  ~HEADER_Opcode_MASK)  |  (Opcode  <<  HEADER_Opcode_OFFSET)
+#define  SET_HEADER_AA(FLAGS,AA)          FLAGS  =  (FLAGS  &  ~HEADER_AA_MASK)      |  (AA      <<  HEADER_AA_OFFSET)
+#define  SET_HEADER_TC(FLAGS,TC)          FLAGS  =  (FLAGS  &  ~HEADER_TC_MASK)      |  (TC      <<  HEADER_TC_OFFSET)
+#define  SET_HEADER_RD(FLAGS,RD)          FLAGS  =  (FLAGS  &  ~HEADER_RD_MASK)      |  (RD      <<  HEADER_RD_OFFSET)
+#define  SET_HEADER_RA(FLAGS,RA)          FLAGS  =  (FLAGS  &  ~HEADER_RA_MASK)      |  (RA      <<  HEADER_RA_OFFSET)
+#define  SET_HEADER_Z(FLAGS,Z)            FLAGS  =  (FLAGS  &  ~HEADER_Z_MASK)       |  (Z       <<  HEADER_Z_OFFSET)
+#define  SET_HEADER_RCODE(FLAGS,RCODE)    FLAGS  =  (FLAGS  &  ~HEADER_RCODE_MASK)   |  (RCODE   <<  HEADER_RCODE_OFFSET)
 
 enum TYPE
   {
@@ -123,16 +158,23 @@ enum header_RA {
 };
 typedef enum header_RA header_RA;
 
-enum header_RCODE
-  {
+enum header_RCODE {
   RCODE_NO_ERROR, 	/* no error condition */
   RCODE_FORMAT_ERROR, 	/* format error */
   RCODE_SERVER_ERROR, 	/* server error */
   RCODE_NXDOMAIN, 	/* no existent domain */
   RCODE_NA, 		/* not implemented (not available) */
   RCODE_REFUSED, 	/* refused */
-  };
+};
 typedef enum header_RCODE header_RCODE;
+
+enum RR_CLASS {
+  CLASS_IN = 1,
+  CLASS_CS,
+  CLASS_CH,
+  CLASS_HS,
+};
+typedef enum RR_CLASS RR_CLASS;
 
 /*** Flags for DNS header.  OR these together. ***/
 #define HEADER_QR 0x80     /* is this a query or reply?
@@ -151,51 +193,11 @@ typedef enum header_RCODE header_RCODE;
 #define FLAG_AAA   0x20 	/* answer authenticated */
 #define RCODE_MASK 0x0f
 
-#define  HEADER_QR_OFFSET      15
-#define  HEADER_Opcode_OFFSET  11
-#define  HEADER_AA_OFFSET      10
-#define  HEADER_TC_OFFSET      9
-#define  HEADER_RD_OFFSET      8
-#define  HEADER_RA_OFFSET      7
-#define  HEADER_Z_OFFSET       4
-#define  HEADER_RCODE_OFFSET   0
-
-#define  HEADER_QR_MASK      0x8000
-#define  HEADER_Opcode_MASK  0x7800
-#define  HEADER_AA_MASK      0x0400
-#define  HEADER_TC_MASK      0x0200
-#define  HEADER_RD_MASK      0x0100
-#define  HEADER_RA_MASK      0x0080
-#define  HEADER_Z_MASK       0x0070
-#define  HEADER_RCODE_MASK   0x000f
-
-#define  GET_HEADER_QR(FLAGS)      ((FLAGS  &  HEADER_QR_MASK)      >>  HEADER_QR_OFFSET)
-#define  GET_HEADER_Opcode(FLAGS)  ((FLAGS  &  HEADER_Opcode_MASK)  >>  HEADER_Opcode_OFFSET)
-#define  GET_HEADER_AA(FLAGS)      ((FLAGS  &  HEADER_AA_MASK)      >>  HEADER_AA_OFFSET)
-#define  GET_HEADER_TC(FLAGS)      ((FLAGS  &  HEADER_TC_MASK)      >>  HEADER_TC_OFFSET)
-#define  GET_HEADER_RD(FLAGS)      ((FLAGS  &  HEADER_RD_MASK)      >>  HEADER_RD_OFFSET)
-#define  GET_HEADER_RA(FLAGS)      ((FLAGS  &  HEADER_RA_MASK)      >>  HEADER_RA_OFFSET)
-#define  GET_HEADER_Z(FLAGS)       ((FLAGS  &  HEADER_Z_MASK)       >>  HEADER_Z_OFFSET)
-#define  GET_HEADER_RCODE(FLAGS)   ((FLAGS  &  HEADER_RCODE_MASK)   >>  HEADER_RCODE_OFFSET)
-
-#define  SET_HEADER_QR(FLAGS,QR)          FLAGS  =  (FLAGS  &  ~HEADER_QR_MASK)      |  (QR      <<  HEADER_QR_OFFSET)
-#define  SET_HEADER_Opcode(FLAGS,Opcode)  FLAGS  =  (FLAGS  &  ~HEADER_Opcode_MASK)  |  (Opcode  <<  HEADER_Opcode_OFFSET)
-#define  SET_HEADER_AA(FLAGS,AA)          FLAGS  =  (FLAGS  &  ~HEADER_AA_MASK)      |  (AA      <<  HEADER_AA_OFFSET)
-#define  SET_HEADER_TC(FLAGS,TC)          FLAGS  =  (FLAGS  &  ~HEADER_TC_MASK)      |  (TC      <<  HEADER_TC_OFFSET)
-#define  SET_HEADER_RD(FLAGS,RD)          FLAGS  =  (FLAGS  &  ~HEADER_RD_MASK)      |  (RD      <<  HEADER_RD_OFFSET)
-#define  SET_HEADER_RA(FLAGS,RA)          FLAGS  =  (FLAGS  &  ~HEADER_RA_MASK)      |  (RA      <<  HEADER_RA_OFFSET)
-#define  SET_HEADER_Z(FLAGS,Z)            FLAGS  =  (FLAGS  &  ~HEADER_Z_MASK)       |  (Z       <<  HEADER_Z_OFFSET)
-#define  SET_HEADER_RCODE(FLAGS,RCODE)    FLAGS  =  (FLAGS  &  ~HEADER_RCODE_MASK)   |  (RCODE   <<  HEADER_RCODE_OFFSET)
-
-
-#define CLASS_IN 0x01
-
-
 typedef struct {
   char      *NAME;
   uint16_t  TYPE;
   uint16_t  CLASS;
-  uint16_t  TTL;
+  uint32_t  TTL;
   uint16_t  RDLENGTH;
   char      *RDATA;
   int       privat;
