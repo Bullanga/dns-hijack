@@ -40,7 +40,7 @@ const char comment[] = "More info: https://github.com/dhap0/dns-hijack";
 
 const int RECORDS_SIZE = 2;
 
-const RR records[] = {
+RR records[] = {
   /*  domain            type  private  ip           */
   {   .NAME = "cpdvl-blau.vida",  .TYPE = TYPE_A,    .privat = 0,       .RDATA = "192.168.1.42"  },
   {   .NAME = "wikipedia.dks",  .TYPE = TYPE_A,    .privat = 1,       .RDATA = "127.0.0.1"  },

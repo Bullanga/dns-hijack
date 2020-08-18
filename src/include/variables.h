@@ -5,7 +5,7 @@
 #include "dns_types.h"
 
 extern  const  int          RECORDS_SIZE;
-extern  const  RR           records[];
+extern  RR           records[];
 extern  const  char         comment[];
 extern  const  unsigned int max_forks;
 extern  const  char         dhcp_ip_range[2][16];
