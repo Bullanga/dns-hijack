@@ -11,6 +11,8 @@ void generate_success_response(Message *request, const char *ip, const char *com
 void parse_client_ip(char *target, const struct sockaddr *client);
 void parse_message_raw_body(Message *message);
 void resolve_query(Message *message, const RR *records, int records_size);
+void RR_populate_missing(RR *rr);
+void RR_build_raw_big_endian(RR *rr);
 
 
 
