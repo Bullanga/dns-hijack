@@ -60,6 +60,12 @@ uint16_t RDATA_TYPE_A_build(char *RDATA){
   RDATA[1] = (uint8_t) (ipAddr >> 16) & 0xff;
   RDATA[2] = (uint8_t) (ipAddr >> 8)  & 0xff;
   RDATA[3] = (uint8_t) (ipAddr)       & 0xff;
+  
+  printf("pre :%x\n", (unsigned char) RDATA[0]);
+  printf("pre :%x\n", (unsigned char) RDATA[1]);
+  printf("pre :%x\n", (unsigned char) RDATA[2]);
+  printf("pre :%x\n", (unsigned char) RDATA[3]);
+  printf("----------\n");
 
   return RDLENGTH;
 }
@@ -77,10 +83,10 @@ void RR_populate_missing(RR *rr) {
 
   if (!rr->RDLENGTH) 
     rr->RDLENGTH = RDATA_build_array[rr->TYPE](rr->RDATA);
-  printf("%x\n", (unsigned char) rr->RDATA[0]);
-  printf("%x\n", (unsigned char) rr->RDATA[1]);
-  printf("%x\n", (unsigned char) rr->RDATA[2]);
-  printf("%x\n", (unsigned char) rr->RDATA[3]);
+  printf("post :%x\n", (unsigned char) rr->RDATA[0]);
+  printf("post :%x\n", (unsigned char) rr->RDATA[1]);
+  printf("post :%x\n", (unsigned char) rr->RDATA[2]);
+  printf("post :%x\n\n", (unsigned char) rr->RDATA[3]);
 }
 
 void RR_raw_big_endian_build(RR *rr) {
