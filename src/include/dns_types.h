@@ -236,6 +236,7 @@ typedef struct {
   char      raw_body[500]; 	/* data */
   Question  question;
   Answer    answer;
+  uint32_t raw_size;
 } Message;
 
 typedef struct {

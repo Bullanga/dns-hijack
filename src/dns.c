@@ -57,9 +57,8 @@ int RR_initialize(RR *records) {
   int i;
   RR *rr = records;
   for (i = 0; i < RECORDS_SIZE; ++i) {
-    printf("one\n");
     RR_populate_missing(rr);
-    RR_build_raw_big_endian(rr);
+    RR_raw_big_endian_build(rr);
     ++rr;
   }
   return 1;
@@ -99,9 +98,9 @@ int main(int argc, char * argv[]) {
     // considerem tamany minim del paacket 12 bytes
 
     if (messageLen >= 12) {
-      parse_message_raw_body(& (packet.message));
+      message_big_endian_parse(& (packet.message));
 
-      resolve_query(& (packet.message), records, RECORDS_SIZE);
+      message_query_resolve(& (packet.message), records, RECORDS_SIZE);
 
       modules_execute(&packet);
 
