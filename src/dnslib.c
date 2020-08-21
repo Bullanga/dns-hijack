@@ -11,7 +11,8 @@
 #include "variables.h"
 
 
-// Input:  '6google3com0'
+// src:  '6google3com0'
+// dest: 'google.com'
 // Return: 12
 //
 // - Note: Both the number and chars are in a uint8_t or char format.
@@ -30,6 +31,11 @@ int raw_hostname_to_s(char *dest, char *src) {
   return bytes_parsed;
 }
 
+// src:  'google.com'
+// dest: '6google3com0'
+// Return: 12
+//
+// - Note: Both the number and chars are in a uint8_t or char format.
 int s_to_raw_hostname(char *dest, char *src) {
   char     *ptr          =  strchr(src,  '.');
   int      bytes_writen  =  0;
@@ -39,10 +45,10 @@ int s_to_raw_hostname(char *dest, char *src) {
   bytes_writen += strlen(src) + 1;
 
   while ((ptr = strchr(src, '.')) != NULL) {
-    label_len = (ptr - src) / sizeof(char);
-    *dest = label_len;
-    dest  += label_len + 1;
-    src = dest + 1;
+    label_len  =   (ptr - src)/sizeof(char);
+    *dest      =   label_len;              
+    dest       +=  label_len + 1;       
+    src        =   dest + 1;       
   }
 
   *dest = strlen(src);
@@ -50,22 +56,16 @@ int s_to_raw_hostname(char *dest, char *src) {
   return bytes_writen;
 }
 
-uint16_t RDATA_TYPE_A_build(char *RDATA){
+uint16_t RDATA_TYPE_A_build(char **RDATA){
   uint16_t  RDLENGTH  =  4;
-  int       ipAddr    =  ntohl(inet_addr(RDATA));
+  int       ipAddr    =  ntohl(inet_addr(*RDATA));
 
-  RDATA =  malloc(RDLENGTH);
+  *RDATA =  malloc(RDLENGTH);
 
-  RDATA[0] = (uint8_t) (ipAddr >> 24) & 0xff;
-  RDATA[1] = (uint8_t) (ipAddr >> 16) & 0xff;
-  RDATA[2] = (uint8_t) (ipAddr >> 8)  & 0xff;
-  RDATA[3] = (uint8_t) (ipAddr)       & 0xff;
-  
-  printf("pre :%x\n", (unsigned char) RDATA[0]);
-  printf("pre :%x\n", (unsigned char) RDATA[1]);
-  printf("pre :%x\n", (unsigned char) RDATA[2]);
-  printf("pre :%x\n", (unsigned char) RDATA[3]);
-  printf("----------\n");
+  (*RDATA)[0] = (uint8_t) (ipAddr >> 24) & 0xff;
+  (*RDATA)[1] = (uint8_t) (ipAddr >> 16) & 0xff;
+  (*RDATA)[2] = (uint8_t) (ipAddr >> 8)  & 0xff;
+  (*RDATA)[3] = (uint8_t) (ipAddr)       & 0xff;
 
   return RDLENGTH;
 }
@@ -82,11 +82,7 @@ void RR_populate_missing(RR *rr) {
   rr->TTL = 10;
 
   if (!rr->RDLENGTH) 
-    rr->RDLENGTH = RDATA_build_array[rr->TYPE](rr->RDATA);
-  printf("post :%x\n", (unsigned char) rr->RDATA[0]);
-  printf("post :%x\n", (unsigned char) rr->RDATA[1]);
-  printf("post :%x\n", (unsigned char) rr->RDATA[2]);
-  printf("post :%x\n\n", (unsigned char) rr->RDATA[3]);
+    rr->RDLENGTH = RDATA_build_array[rr->TYPE](&(rr->RDATA));
 }
 
 void RR_raw_big_endian_build(RR *rr) {
