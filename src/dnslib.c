@@ -70,7 +70,29 @@ uint16_t RDATA_TYPE_A_build(char **RDATA){
   return RDLENGTH;
 }
 
-uint16_t (*RDATA_build_array[2])() = { NULL, RDATA_TYPE_A_build };
+uint16_t RDATA_TYPE_TXT_build(char **RDATA){
+  uint16_t RDLENGTH = strlen(*RDATA);
+  return RDLENGTH;
+}
+
+uint16_t (*RDATA_build_array[255])() = { NULL,
+                                         RDATA_TYPE_A_build,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         NULL,
+                                         RDATA_TYPE_TXT_build,
+                                         };
 
 void RR_populate_missing(RR *rr) {
   if (!rr->TYPE)
@@ -251,6 +273,7 @@ void message_big_endian_parse(Message *message) {
     message->question.QTYPE   =  (void  *)  (raw_body                  +  bytes_parsed);
     message->question.QCLASS  =  (void  *)  (message->question.QTYPE)  +  sizeof(uint16_t);
     message->answer.raw_begin =  (void  *)  (message->question.QCLASS) +  sizeof(uint16_t);
+    message->answer.raw_end   =  message->answer.raw_begin;
 
     *(message->question.QTYPE)   =  ntohs(*(message->question.QTYPE));
     *(message->question.QCLASS)  =  ntohs(*(message->question.QCLASS));
@@ -278,9 +301,8 @@ void message_query_resolve(Message *message, const RR *records, int records_size
 	{
 		if(0 == strcmp(message->question.QNAME, rr->NAME))
 		{
-      message->answer.rr = rr;
       ++message->header.ANCOUNT;
-      memcpy(message->answer.raw_begin, rr->raw, rr->raw_size);
+      memcpy(message->answer.raw_end, rr->raw, rr->raw_size);
       message->raw_size += rr->raw_size;
 		}
     rr++;
