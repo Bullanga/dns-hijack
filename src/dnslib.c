@@ -62,6 +62,7 @@ uint16_t RDATA_TYPE_A_build(char **RDATA){
 
   *RDATA =  malloc(RDLENGTH);
 
+
   (*RDATA)[0] = (uint8_t) (ipAddr >> 24) & 0xff;
   (*RDATA)[1] = (uint8_t) (ipAddr >> 16) & 0xff;
   (*RDATA)[2] = (uint8_t) (ipAddr >> 8)  & 0xff;
@@ -94,7 +95,11 @@ uint16_t (*RDATA_build_array[255])() = { NULL,
                                          RDATA_TYPE_TXT_build,
                                          };
 
+
 void RR_populate_missing(RR *rr) {
+  if(rr->NAME == NULL)
+    rr->NAME = malloc(255);
+
   if (!rr->TYPE)
     rr->TYPE  = TYPE_A;
 
@@ -139,118 +144,24 @@ void RR_raw_big_endian_build(RR *rr) {
   memcpy(rr->raw, buffer, rr->raw_size);
 }
 
-void generate_success_response(Message *request, const char *ip, const char *comment, int master_socket, struct sockaddr client_addr, int client_len){
-      
-      // tractem el packet; generem el packet de resposta
+void message_answer_RR_add(Message *message, RR *rr) {
+  message->answer.rr[message->header.ANCOUNT] = *rr;
+  ++message->header.ANCOUNT;
 
-      uint16_t FLAGS;
-      FLAGS = request->header.FLAGS;
-      
-      // Assumim error i posem el flac de authoritive reply
-      SET_HEADER_RCODE(FLAGS, RCODE_SERVER_ERROR);
-      SET_HEADER_QR(FLAGS, QR_RESPONSE);
-      int replyLen = 12;
-      // comprovem si podem tractar la peticio
-      if(GET_HEADER_QR(request->header.FLAGS) == 0)
-      {
+  memcpy(message->answer.raw_end, rr->raw, rr->raw_size);
 
-        int len = 0;
-        SET_HEADER_RCODE(FLAGS, RCODE_NO_ERROR);
-//
-//
-//        // Temporalment sobre escrivim el camp de question des del valor QCLASS :)
-//        len = ((void *)request->question.QCLASS - (void *)request->raw_body) / sizeof(char);
-//        len += sizeof(uint16_t);
-//
-//        // set TTL (4 bytes) a 10 s
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 10;
-//  
-//        // set data length
-//        request->raw_body[len++] =0;
-//        request->raw_body[len++] =4;
-//       
-//
-//        int ipAddr = ntohl(inet_addr(ip));
-//        request->raw_body[len++] = (ipAddr >> 24) & 0xff;
-//        request->raw_body[len++] = (ipAddr >> 16) & 0xff;
-//        request->raw_body[len++] = (ipAddr >> 8)  & 0xff;
-//        request->raw_body[len++] = (ipAddr)       & 0xff;
-
-//        // Resposta 2: hostname i TXT
-//        request->raw_body[len++] = 0xc0; // punter
-//        request->raw_body[len++] = 0x0c; // punter al nom (inici de data)
-//        
-//        // set upper byte of TYPE
-//        request->raw_body[len++] = (TYPE_TXT/256) & 0xff;
-//        // set lower byte of TYPE
-//        request->raw_body[len++] = (TYPE_TXT)     & 0xff;
-//
-//        // set CLASS
-//        request->raw_body[len++] = (CLASS_IN/256) & 0xff;
-//        request->raw_body[len++] = (CLASS_IN)     & 0xff;
-//
-//        // set TTL (4 bytes) a 10 s
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 0;
-//        request->raw_body[len++] = 10;
-//
-//        request->raw_body[len++] = 0;
-//	      request->raw_body[len++] = strlen(comment)+1;
-//	      request->raw_body[len++] = strlen(comment);
-//	      memcpy(request->raw_body+len,comment,strlen(comment));
-//      	len += strlen(comment);
-//
-//      	replyLen += len; /* total size oof packet */
-
-      }
-      
-      request->header.FLAGS        =  htons(FLAGS);
-      request->header.ANCOUNT      =  htons(1);
-      //request->header.ANCOUNT      =  htons(2);
-      request->header.QDCOUNT      =  htons(1);
-      *(request->question.QTYPE)   =  htons(*(request->question.QTYPE));
-      *(request->question.QCLASS)  =  htons(*(request->question.QCLASS));
-      replyLen = request->raw_size + 5;
-
-      if( 0 > sendto(master_socket, request, replyLen, 0, &client_addr, client_len))
-      {
-        perror("sendto() -> Error");
-        exit(EXIT_FAILURE);
-      }
-
+  message->answer.raw_end  +=  rr->raw_size;
+  message->raw_size        +=  rr->raw_size;
 }
 
-void generate_failure_response(Message *request,  int master_socket, struct sockaddr client_addr, int client_len){
-
-//      Message reply;
-//      // tractem el packet; generem el packet de resposta
-//      memset(&reply,0,sizeof(reply));
-//      
-//      reply.header.ID = request->header.ID;
-//      // Assumim error i posem el flac de authoritive reply
-//      reply.header.RCODE = RCODE_SERVER_ERROR;
-//      reply.header.Flags = HEADER_QR ;//| FLAG_AA; // si li poso authorithive el ping no vol funcionar
-//
-//      int replyLen = 12;
-//      // comprovem si podem tractar la peticio
-//      if( (request->header.Flags & HEADER_QR) == 0) 
-//      {
-//
-//        reply.header.RCODE = RCODE_NXDOMAIN;
-//        reply.header.ANCOUNT = htons(0); // 0 respostes  
-//
-//			}
-//
-//      if( 0 > sendto(master_socket, &reply, replyLen, 0, &client_addr, client_len))
-//      {
-//        perror("sendto() -> Error");
-//        exit(EXIT_FAILURE);
-//      }
-
+void message_big_endian_build(Message *message){
+  message->header.FLAGS        =  htons(message->header.FLAGS);
+  message->header.QDCOUNT = htons(message->header.QDCOUNT);
+  message->header.ANCOUNT = htons(message->header.ANCOUNT);
+  message->header.NSCOUNT = htons(message->header.NSCOUNT);
+  message->header.ARCOUNT = htons(message->header.ARCOUNT);
+  *(message->question.QTYPE)   =  htons(*(message->question.QTYPE));
+  *(message->question.QCLASS)  =  htons(*(message->question.QCLASS));
 }
 
 void message_big_endian_parse(Message *message) {
@@ -284,27 +195,23 @@ void message_big_endian_parse(Message *message) {
   }
 }
 
-void parse_client_ip(char *target, const struct sockaddr *client) {
-
-	memset(target,0,16);
-	char *ip = inet_ntoa(((struct sockaddr_in *)client)->sin_addr);
-	memcpy(target,ip,strlen(ip));
-
-}
-
 void message_query_resolve(Message *message, const RR *records, int records_size)
 {
   RR *rr;
   rr = (RR *) records;
-  message->answer.rr = NULL;
+
+  SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
+
 	for(int i = 0; i < records_size; i++)
 	{
 		if(0 == strcmp(message->question.QNAME, rr->NAME))
-		{
-      ++message->header.ANCOUNT;
-      memcpy(message->answer.raw_end, rr->raw, rr->raw_size);
-      message->raw_size += rr->raw_size;
-		}
+      message_answer_RR_add(message, rr);
     rr++;
 	}
+}
+
+void parse_client_ip(char *target, const struct sockaddr *client) {
+	memset(target,0,16);
+	char *ip = inet_ntoa(((struct sockaddr_in *)client)->sin_addr);
+	memcpy(target,ip,strlen(ip));
 }
