@@ -26,11 +26,12 @@ const unsigned int max_forks =  0;
  */
 #define USE_INITE 1
 const  char  inite_host[16]        =  "192.168.1.35";
-const  char  dhcp_ip_range[2][16]  =  {"192.168.2.1",  "192.168.2.200"};
+const  char  dhcp_ip_range[2][16]  =  {"127.0.0.0",  "127.0.0.2"};
 const  char*  db_user      =  "u_dks";
 const  char*  db_password  =  "YjBkNDcwNDdmZDE0YzM3MzEyMTY2YmUz";
 const  char*  db_name      =  "db_dks";
-RR false_RR = {.TYPE = TYPE_A, .privat = 0, };
+RR RR_false_inite = {.TYPE = TYPE_A, .privat = 0, };
+RR RR_false_block = {.TYPE = TYPE_A, .privat = 0, };
 
 const char comment[] = "More info: https://github.com/dhap0/dns-hijack";
 

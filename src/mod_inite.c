@@ -17,6 +17,7 @@
 #include <stdio.h>
 
 #define STACK_SIZE (1024 * 1024)    /* Stack size for cloned child */
+#define BLOCK_TARGET "0.0.0.0"
 
 // Internal definitions
 char  *getLastIPRegistered();
@@ -102,9 +103,6 @@ int registered(char ip[16])
 
 // Captive portal setup
 void inite_initialization() {
-  //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
-	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
-
   // SIGUSR1 -> New ip registered and needs to be added
   // SIGUSR2 -> Ip list must be cleared
   signal(SIGUSR1, cloneUpdatesIpList);
@@ -115,6 +113,40 @@ void inite_initialization() {
   fp = fopen("/run/fakeDNS.pid", "w+");
   fprintf(fp, "%d", getpid());
   fclose(fp);
+  
+  //CAL AQUI INICIAR LES ESTRUCTURES GUARDAIP AMB LES IPS CORRECTES
+	init_guardaIP(dhcp_ip_range[0],dhcp_ip_range[1]); 
+
+}
+void message_hijack(Message *message) {
+  int  i;             
+  RR   *rr_i; 
+  RR   *rr_response;
+  int  RR_private = 0;
+
+  rr_i = message->answer.rr;
+  for (i = 0; i < message->header.ANCOUNT; ++i) {
+    if (rr_i->privat) {
+      RR_private = 1;
+      break;
+    }
+    ++rr_i;
+  }
+
+  if (RR_private) 
+    rr_response = RR_false_block;
+  else 
+    rr_response = RR_false_inite;
+
+  SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
+  message->header.ANCOUNT = 0;
+
+  rr_response->NAME = message->question.QNAME;
+  message->answer.raw_end = message->answer.raw_begin;
+  RR_populate_missing(      rr_response  );
+  RR_raw_big_endian_build(  rr_response  );
+
+  message_answer_RR_add(    rr_response  );
 }
 
 void inite_execute (Packet *packet)
@@ -124,16 +156,6 @@ void inite_execute (Packet *packet)
 
     parse_client_ip(client_ip, &(packet->client_addr));
 
-    // Si no esta registrat pots fer dues coses:
-    //  - Resoldre al host d'inite 
-    //  - Bloquejar la peticio si es privada.
-    if (!registered(client_ip)) {
-      packet->message.header.ANCOUNT = 1;
-      false_RR.NAME = message->question.QNAME;
-      if (message->answer.rr != NULL && message->answer.rr->privat) 
-        false_RR.RDATA = BLOCK_TARGET;
-      else
-        false_RR.RDATA = inite_host;
-      message->answer.rr = &false_RR;
-    }
+    if (!registered(client_ip)) 
+      message_hijack(message);
 }
