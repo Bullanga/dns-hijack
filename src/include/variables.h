@@ -12,10 +12,12 @@ extern  const  char         dhcp_ip_range[2][16];
 
 // Inite stuff
 
-extern const char inite_host[16];
+extern char inite_host[16];
+
 extern const  char*  db_user;
 extern const  char*  db_password;
 extern const  char*  db_name;
+
 extern RR RR_false_inite;
 extern RR RR_false_block;
 
