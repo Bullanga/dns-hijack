@@ -226,9 +226,10 @@ typedef struct {
 } Question;
 
 typedef struct {
-  RR        *rr;      // The size of this array is contained in Header.ANCOUNT 
+  char      *raw_end;
   char      *raw_begin;
   uint16_t  raw_size;
+  RR        *rr;
 } Answer;
 
 typedef struct {
