@@ -228,8 +228,7 @@ typedef struct {
 typedef struct {
   char      *raw_end;
   char      *raw_begin;
-  uint16_t  raw_size;
-  RR        *rr;
+  RR        rr[100];
 } Answer;
 
 typedef struct {
