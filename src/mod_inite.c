@@ -25,6 +25,7 @@ int   ipListUpdate();
 void  cloneUpdatesIpList();
 int   registered(char *ip);
 
+
 // Captive portal 
 // Return, in string human readable format, the most resent ip registered to a postgresql database
 char* getLastIPRegistered() {
@@ -134,23 +135,21 @@ void message_hijack(Message *message) {
   }
 
   if (RR_private) 
-    rr_response = RR_false_block;
+    rr_response = &RR_false_block;
   else 
-    rr_response = RR_false_inite;
+    rr_response = &RR_false_inite;
+
+  RR_populate_missing(rr_response);
+  strcpy(rr_response->NAME, message->question.QNAME);
+  RR_raw_big_endian_build(rr_response);
 
   SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
   message->header.ANCOUNT = 0;
-
-  rr_response->NAME = message->question.QNAME;
   message->answer.raw_end = message->answer.raw_begin;
-  RR_populate_missing(      rr_response  );
-  RR_raw_big_endian_build(  rr_response  );
-
-  message_answer_RR_add(    rr_response  );
+  message_answer_RR_add(message, rr_response);
 }
 
-void inite_execute (Packet *packet)
-{
+void inite_execute (Packet *packet){
 		char client_ip[16];
     Message *message = &(packet->message);
 
