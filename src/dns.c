@@ -104,10 +104,12 @@ int main(int argc, char * argv[]) {
 
       modules_execute(&packet);
 
-      if (packet.message.header.ANCOUNT) 
-        generate_success_response(&(packet.message), packet.message.answer.rr->RDATA, comment, master_socket, packet.client_addr, client_len);
-      else 
-        generate_failure_response(&(packet.message), master_socket, packet.client_addr, client_len);
+      message_big_endian_build(&(packet.message));
+      if( 0 > sendto(master_socket, &(packet.message), packet.message.raw_size, 0, &packet.client_addr, client_len))
+      {
+        perror("sendto() -> Error");
+        exit(EXIT_FAILURE);
+      }
     }
   }
 }
