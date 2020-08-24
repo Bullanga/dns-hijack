@@ -47,7 +47,7 @@ char* getLastIPRegistered() {
     fprintf(stderr, "Connection to database failed: %s\n",
     PQerrorMessage(conn));
     PQfinish(conn);
-    exit(1);
+    exit(EXIT_FAILURE);
   }
 
   // Execute query
