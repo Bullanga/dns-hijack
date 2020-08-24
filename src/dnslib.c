@@ -72,7 +72,11 @@ uint16_t RDATA_TYPE_A_build(char **RDATA){
 }
 
 uint16_t RDATA_TYPE_TXT_build(char **RDATA){
-  uint16_t RDLENGTH = strlen(*RDATA);
+  uint16_t RDLENGTH = strlen(*RDATA) + 1;
+  char *buff = malloc(RDLENGTH);
+  buff[0] = RDLENGTH - 1;
+  memcpy(&buff[1], *RDATA, RDLENGTH -1);
+  *RDATA = buff;
   return RDLENGTH;
 }
 
@@ -160,8 +164,11 @@ void message_big_endian_build(Message *message){
   message->header.ANCOUNT = htons(message->header.ANCOUNT);
   message->header.NSCOUNT = htons(message->header.NSCOUNT);
   message->header.ARCOUNT = htons(message->header.ARCOUNT);
-  *(message->question.QTYPE)   =  htons(*(message->question.QTYPE));
-  *(message->question.QCLASS)  =  htons(*(message->question.QCLASS));
+
+  if (message->header.QDCOUNT) {
+    *(message->question.QTYPE)   =  htons(*(message->question.QTYPE));
+    *(message->question.QCLASS)  =  htons(*(message->question.QCLASS));
+  }
 }
 
 void message_big_endian_parse(Message *message) {
@@ -173,7 +180,7 @@ void message_big_endian_parse(Message *message) {
   message->raw_size       = 12;
 
 
-  if (GET_HEADER_QR(message->header.FLAGS) == QR_QUERY) {
+  if (message->header.QDCOUNT) {
     int bytes_parsed;
     char  *QNAME     =  message->question.QNAME;
     char  *raw_body  =  message->raw_body;
