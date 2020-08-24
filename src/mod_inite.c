@@ -37,26 +37,27 @@ char* getLastIPRegistered() {
                   + 1];
 
   // Creates a postgresql connection with credentials from config.h
-  sprintf(credentials, "user=%s password=%s dbname=%s", db_user, db_password, db_name);
+  sprintf(credentials, "user=%s password=%s dbname=%s", db_user, 
+                                                        db_password,
+                                                        db_name);
   PGconn *conn = PQconnectdb(credentials);
 
   // Checks db connection
   if (PQstatus(conn) == CONNECTION_BAD) {
-      
     fprintf(stderr, "Connection to database failed: %s\n",
-        PQerrorMessage(conn));
-        
+    PQerrorMessage(conn));
     PQfinish(conn);
     exit(1);
   }
 
   // Execute query
-  PGresult *res = PQexec(conn, "select ip from portal_registre order by registrat desc limit 1");
+  char *query = "select ip from portal_registre order by registrat desc limit 1";
+  PGresult *res = PQexec(conn, query);
   
   // Check content of response and stores it in return value
-  if (PQresultStatus(res) == PGRES_TUPLES_OK) {
+  if (PQresultStatus(res) == PGRES_TUPLES_OK) 
     ret_val = PQgetvalue(res, 0, 0);
-  }
+  
 
   // Clean and finish db connection
   PQclear(res);
@@ -79,9 +80,9 @@ void cloneUpdatesIpList() {
   int   pid;
   char  *stack;
   char  *stackTop;
+
   stack = mmap(NULL, STACK_SIZE, PROT_READ | PROT_WRITE,
                   MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
-
   if (stack == MAP_FAILED)
     exit(EXIT_FAILURE);
 
@@ -125,6 +126,8 @@ void message_hijack(Message *message) {
   RR   *rr_response;
   int  RR_private = 0;
 
+  SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
+
   rr_i = message->answer.rr;
   for (i = 0; i < message->header.ANCOUNT; ++i) {
     if (rr_i->privat) {
@@ -143,9 +146,10 @@ void message_hijack(Message *message) {
   strcpy(rr_response->NAME, message->question.QNAME);
   RR_raw_big_endian_build(rr_response);
 
-  SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
-  message->header.ANCOUNT = 0;
-  message->answer.raw_end = message->answer.raw_begin;
+  message->raw_size        -=  message->answer.raw_end - message->answer.raw_begin;
+  message->header.ANCOUNT  =   0;
+  message->answer.raw_end  =   message->answer.raw_begin;
+
   message_answer_RR_add(message, rr_response);
 }
 
