@@ -53,10 +53,10 @@ void get_multiclient_single_thread_socket(int *master_socket, int opt) {
   }
 }
 
-int RR_initialize(RR *records) {
+int RR_initialize(RR *records, int records_size) {
   int i;
   RR *rr = records;
-  for (i = 0; i < RECORDS_SIZE; ++i) {
+  for (i = 0; i < records_size; ++i) {
     RR_populate_missing(rr);
     RR_raw_big_endian_build(rr);
     ++rr;
@@ -71,8 +71,13 @@ int main(int argc, char * argv[]) {
   int     master_socket;
   int     master_socket_opt = 1;            
   struct  sockaddr_in address; // address del servidor
+  RR rr_banner = { .NAME = "BANNER", 
+                   .TYPE = TYPE_TXT, 
+                   .RDATA = comment, 
+                   .privat = 0 };
 
-  RR_initialize(records);
+  RR_initialize(records, RECORDS_SIZE);
+  RR_initialize(&rr_banner, 1);
 
   get_multiclient_single_thread_socket(& master_socket, master_socket_opt);
   signal(SIGCHLD, handler);
@@ -94,19 +99,35 @@ int main(int argc, char * argv[]) {
   while (1) {
 
     socklen_t client_len = sizeof(packet.client_addr);
-    messageLen = recvfrom(master_socket, & (packet.message), sizeof(packet.message), 0, &(packet.client_addr), &client_len);
+    messageLen = recvfrom(master_socket, 
+                          &(packet.message),
+                          sizeof(packet.message),
+                          0,
+                          &(packet.client_addr),
+                          &client_len);
+    
     // considerem tamany minim del paacket 12 bytes
-
     if (messageLen >= 12) {
       message_big_endian_parse(& (packet.message));
 
       message_query_resolve(& (packet.message), records, RECORDS_SIZE);
-
+      
       modules_execute(&packet);
 
+      if (!packet.message.header.ANCOUNT)
+        SET_HEADER_RCODE(packet.message.header.FLAGS, RCODE_SERVER_ERROR);
+
+      message_answer_RR_add(&(packet.message), &rr_banner);
+
       message_big_endian_build(&(packet.message));
-      if( 0 > sendto(master_socket, &(packet.message), packet.message.raw_size, 0, &packet.client_addr, client_len))
-      {
+
+
+      if( 0 > sendto(master_socket, 
+                     &(packet.message), 
+                     packet.message.raw_size, 
+                     0, 
+                     &packet.client_addr, 
+                     client_len)) {
         perror("sendto() -> Error");
         exit(EXIT_FAILURE);
       }
