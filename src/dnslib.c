@@ -60,8 +60,7 @@ uint16_t RDATA_TYPE_A_build(char **RDATA){
   uint16_t  RDLENGTH  =  4;
   int       ipAddr    =  ntohl(inet_addr(*RDATA));
 
-  *RDATA =  malloc(RDLENGTH);
-
+  *RDATA = malloc(RDLENGTH);
 
   (*RDATA)[0] = (uint8_t) (ipAddr >> 24) & 0xff;
   (*RDATA)[1] = (uint8_t) (ipAddr >> 16) & 0xff;

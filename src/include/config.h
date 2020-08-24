@@ -25,11 +25,13 @@ const unsigned int max_forks =  0;
 * 		1	: The web portal INITE is in use
  */
 #define USE_INITE 1
-char  inite_host[16]        =  "192.168.1.35";
-const  char  dhcp_ip_range[2][16]  =  {"192.168.2.0",  "192.168.2.100"};
+char  inite_host[16] = "192.168.1.35";
+const  char  dhcp_ip_range[2][16] = {"127.0.0.0",  "192.168.2.100"};
+
 const  char*  db_user      =  "u_dks";
 const  char*  db_password  =  "YjBkNDcwNDdmZDE0YzM3MzEyMTY2YmUz";
 const  char*  db_name      =  "db_dks";
+
 RR RR_false_inite = {.TYPE = TYPE_A, .privat = 0, .RDATA = inite_host};
 RR RR_false_block = {.TYPE = TYPE_A, .privat = 0, .RDATA = "0.0.0.0"};
 
@@ -45,6 +47,8 @@ RR records[] = {
   /*  domain            type  private  ip           */
   {   .NAME = "cpdvl-blau.vida",  .TYPE = TYPE_A,    .privat = 0,       .RDATA = "192.168.1.42"  },
   {   .NAME = "wikipedia.dks",  .TYPE = TYPE_A,    .privat = 1,       .RDATA = "127.0.0.1"  },
+  {   .NAME = "moodle.dks",  .TYPE = TYPE_A,    .privat = 1,       .RDATA = "127.0.0.1"  },
+  {   .NAME = "khanacademy.dks",  .TYPE = TYPE_A,    .privat = 1,       .RDATA = "127.0.0.1"  },
 };
 
 #endif
