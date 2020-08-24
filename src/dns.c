@@ -10,7 +10,6 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
-#include <pthread.h>
 
 #include "dns_types.h"
 #include "config.h"
@@ -21,11 +20,11 @@
 
 int num_forks = 0;
 
-void modules_initialization();
-void modules_execute(Packet *packet);
-void handler(int sig);
-void get_multiclient_single_thread_socket(int *master_socket, int opt);
-int RR_initialize(RR *records, int records_size);
+void  modules_initialization();
+void  modules_execute(Packet *packet);
+void  handler(int sig);
+void  get_multiclient_single_thread_socket(int *master_socket, int opt);
+int   RR_initialize(RR *records, int records_size);
 
 int main(int argc, char * argv[]) {
 
