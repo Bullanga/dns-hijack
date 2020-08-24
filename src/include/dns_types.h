@@ -162,8 +162,8 @@ enum header_RCODE {
   RCODE_NO_ERROR, 	/* no error condition */
   RCODE_FORMAT_ERROR, 	/* format error */
   RCODE_SERVER_ERROR, 	/* server error */
-  RCODE_NXDOMAIN, 	/* no existent domain */
-  RCODE_NA, 		/* not implemented (not available) */
+  RCODE_NAME_ERROR, 	/* no existent domain */
+  RCODE_NOT_IMPLEMENTED, 		/* not implemented (not available) */
   RCODE_REFUSED, 	/* refused */
 };
 typedef enum header_RCODE header_RCODE;
