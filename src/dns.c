@@ -10,6 +10,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <pthread.h>
 
 #include "dns_types.h"
 #include "config.h"
@@ -20,49 +21,11 @@
 
 int num_forks = 0;
 
-void modules_initialization() {
-  #if USE_INITE
-    inite_initialization();
-  #endif
-}
-
-void modules_execute(Packet *packet) {
-  #if USE_INITE
-    inite_execute(packet);
-  #endif
-}
-
-void handler(int sig) {
-  if (sig == SIGCHLD){
-      wait(NULL);
-      --num_forks;
-  } 
-}
-
-void get_multiclient_single_thread_socket(int *master_socket, int opt) {
-  // creem el master socket
-  if ((*master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-    perror("socket() -> Error");
-    exit(EXIT_FAILURE);
-  }
-
-  // configurem el master socket per tractar multiples peticions
-  if (setsockopt(*master_socket, SOL_SOCKET, SO_REUSEADDR, (char * ) & opt, sizeof(opt)) < 0) {
-    perror("setsockopt() -> Error");
-    exit(EXIT_FAILURE);
-  }
-}
-
-int RR_initialize(RR *records, int records_size) {
-  int i;
-  RR *rr = records;
-  for (i = 0; i < records_size; ++i) {
-    RR_populate_missing(rr);
-    RR_raw_big_endian_build(rr);
-    ++rr;
-  }
-  return 1;
-}
+void modules_initialization();
+void modules_execute(Packet *packet);
+void handler(int sig);
+void get_multiclient_single_thread_socket(int *master_socket, int opt);
+int RR_initialize(RR *records, int records_size);
 
 int main(int argc, char * argv[]) {
 
@@ -133,4 +96,48 @@ int main(int argc, char * argv[]) {
       }
     }
   }
+}
+
+void modules_initialization() {
+  #if USE_INITE
+    inite_initialization();
+  #endif
+}
+
+void modules_execute(Packet *packet) {
+  #if USE_INITE
+    inite_execute(packet);
+  #endif
+}
+
+void handler(int sig) {
+  if (sig == SIGCHLD){
+      wait(NULL);
+      --num_forks;
+  } 
+}
+
+void get_multiclient_single_thread_socket(int *master_socket, int opt) {
+  // creem el master socket
+  if ((*master_socket = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+    perror("socket() -> Error");
+    exit(EXIT_FAILURE);
+  }
+
+  // configurem el master socket per tractar multiples peticions
+  if (setsockopt(*master_socket, SOL_SOCKET, SO_REUSEADDR, (char * ) & opt, sizeof(opt)) < 0) {
+    perror("setsockopt() -> Error");
+    exit(EXIT_FAILURE);
+  }
+}
+
+int RR_initialize(RR *records, int records_size) {
+  int i;
+  RR *rr = records;
+  for (i = 0; i < records_size; ++i) {
+    RR_populate_missing(rr);
+    RR_raw_big_endian_build(rr);
+    ++rr;
+  }
+  return 1;
 }
