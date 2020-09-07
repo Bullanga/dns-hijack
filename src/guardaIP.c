@@ -47,7 +47,7 @@ int calcRange(const char* ip_ini,const char* ip_fin){
 
 int r_findValue(char* ip){
    int index = calcIndex(ip);
-   if (index >= r_length) return -1;
+	 if (index >= r_length || index < 0) return -1;
    return registry[index] == 1; //em retornarà 1 si l'IP està registrada.
 }
 
