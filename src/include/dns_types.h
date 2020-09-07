@@ -176,23 +176,6 @@ enum RR_CLASS {
 };
 typedef enum RR_CLASS RR_CLASS;
 
-/*** Flags for DNS header.  OR these together. ***/
-#define HEADER_QR 0x80     /* is this a query or reply?
-			       0=query, 1=reply */
-#define FLAG_OPCODE_MASK   0x30 	/* query mask */
-#define FLAG_OPCODE_QUERY  0x00 	/* standard query */
-#define FLAG_OPCODE_IQUERY 0x10 /* inverse query */
-#define FLAG_OPCODE_STATUS 0x20 /* server status request */
-/* other opcode values bits reserved */
-#define FLAG_AA 0x04 	/* authoritative answer */
-#define FLAG_TC 0x02 	/* message truncated */
-#define FLAG_RD 0x01 	/* recursion denied */
-
-/* Flags added to the rcode byte */
-#define FLAG_RA    0x80 	/* recursion available */
-#define FLAG_AAA   0x20 	/* answer authenticated */
-#define RCODE_MASK 0x0f
-
 typedef struct {
   char      *NAME;
   uint16_t  TYPE;
