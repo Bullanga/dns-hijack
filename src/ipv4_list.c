@@ -13,7 +13,7 @@ typedef struct{
 	uint8_t *presence;
 } ipv4_list;
 
-uint32_t ip_to_n(uint32_t offset, char *ip) {
+uint32_t ip_to_n(char *ip, uint32_t offset) {
     struct in_addr addr_n;
 
     // Get value of ip
@@ -31,8 +31,8 @@ void *ipv4_list_create(char *ip_first, char *ip_last) {
 	ipv4_list *list = malloc(sizeof(ipv4_list));
 
     // Fill struct
-    list->ip_first_n = ip_to_n(0, ip_first);
-    list->list_size = ip_to_n(0, ip_last) - list->ip_first_n + 1;
+    list->ip_first_n = ip_to_n(ip_first, 0);
+    list->list_size = ip_to_n(ip_last, 0) - list->ip_first_n + 1;
 
     list->presence = malloc(list->list_size*sizeof(uint8_t));
     memset(list->presence, 0, list->list_size*sizeof(uint8_t));
@@ -52,7 +52,7 @@ int ipv4_list_add(void *_list, char *ip) {
     ipv4_list *list = _list;
     int return_value = 0;
 
-    index = ip_to_n(list->ip_first_n, ip);
+    index = ip_to_n(ip, list->ip_first_n);
 
     // Check if its a valid index and add it if so
     if (index >= 0 && index < list->list_size) {
@@ -63,16 +63,18 @@ int ipv4_list_add(void *_list, char *ip) {
     return return_value;
 }
 
-int ipv4_list_contains(void *_list, char *ip) {
+int ipv4_list_contains(void *_list, struct in_addr ip) {
     uint32_t index;
     int return_value = 0;
     ipv4_list *list = _list;
 
-    index = ip_to_n(list->ip_first_n, ip);
+    index = ntohl(ip.s_addr) - list->ip_first_n;
 
     // Check if its a valid index and add it if so
-    if (index >= 0 && index < list->list_size && list->presence[index])
-        return_value = 1;
+    if (index >= 0 && index < list->list_size)
+      return_value = list->presence[index];
+    else
+      return_value = -1;
 
     return return_value;
 }
@@ -81,8 +83,8 @@ void ipv4_list_debug(void *_list) {
     int i;
     ipv4_list *list = _list;
     printf("-- LIST INFO --\n");
-    printf("list size: %d\n",list->list_size);
-    printf("list start: %d\n",list->ip_first_n);
+    printf("list size: %u\n",list->list_size);
+    printf("list start: %u\n",list->ip_first_n);
     for (i = 0; i < list->list_size; ++i) {
         printf("%d: %d\n", i, list->presence[i]);
     }
