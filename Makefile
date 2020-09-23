@@ -20,7 +20,7 @@ T_SRC_DIR=$(TESTS_DIR)/src
 ## Include dels tests
 T_INCLUDE=$(T_SRC_DIR)/include
 
-SRC= dns.c dnslib.c utils.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
+SRC= dns.c dnslib.c mod_inite.c guardaIP.c  ## Codis en C que tenim i que es volen compilar. CAL POSAR AQUI TOTS ELS .C QUE ES VULGUI COMPILAR. MOLT IMPORTANT. AIXÒ PERMETRÀ TAMBÉ AFEGIR-LOS AL TEST !!!
 
 SRC_TEST= guardaIP.c dnslib.c  #fitxers que es testejen 
 
@@ -29,8 +29,8 @@ TEST_FRAMEWORK= tests/src/include/munit
 OBJ=${SRC:.c=.o}
 OBJ_TEST=${SRC_TEST:.c=.o}
 
-CFLAGS= -Wall -std=c99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
-CFLAGS_TEST= -Wall -std=c99 -ggdb -I $(INCLUDE) -I $(T_INCLUDE) -I /usr/include/postgresql
+CFLAGS= -Wall -std=gnu99 -ggdb -I $(INCLUDE) -I /usr/include/postgresql
+CFLAGS_TEST= -Wall -std=gnu99 -ggdb -I $(INCLUDE) -I $(T_INCLUDE) -I /usr/include/postgresql
 CC=gcc
 
 #### FITXERS DEL CODI ####
