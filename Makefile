@@ -36,8 +36,11 @@ CC=gcc
 #### FITXERS DEL CODI ####
 all: dns 
 
-dns: ${OBJ}	
-	$(CC) $(CFLAGS) -o dns $^ -lpq
+create_dir:
+	mkdir -p bin
+
+dns: ${OBJ}	| create_dir
+	$(CC) $(CFLAGS) -o bin/dns $^ -lpq
 
 %.o: $(SRC_DIR)/%.c
 	$(CC) $(CFLAGS) -c $<
@@ -56,4 +59,4 @@ munit.o:
 
 
 clean:     # AIXO ENS HO HEM DE CURRAR
-	rm -rf *.o test dns $(INCLUDE)/*.gch
+	rm -rf *.o bin/* test dns $(INCLUDE)/*.gch

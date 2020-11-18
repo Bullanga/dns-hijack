@@ -1,12 +1,11 @@
 [Unit]
-Description=DNS del projecte
+Description=Light and custom DNS 
 After=postgresql.service
 
 [Service]
-Envirionment=PYTHONUNBUFFERED=1
 Restart=on-failure
-ExecStart=./usr/local/customDNS/dns
-RestartSec=1
+ExecStart=/home/develop/src/dns-hijack/bin/dns
+RestartSec=5
 
 [Install]
 WantedBy=default.target
