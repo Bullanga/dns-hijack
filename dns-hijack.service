@@ -1,0 +1,13 @@
+[Unit]
+Description=DNS del projecte
+After=postgresql.service
+
+[Service]
+Envirionment=PYTHONUNBUFFERED=1
+Restart=on-failure
+ExecStart=./usr/local/customDNS/dns
+RestartSec=1
+
+[Install]
+WantedBy=default.target
+
