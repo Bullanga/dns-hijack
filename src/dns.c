@@ -12,10 +12,23 @@
 #include <fcntl.h>
 
 #include "dns_types.h"
-#include "config.h"
 #include "guardaIP.h"
 #include "mod_inite.h"
 #include "dnslib.h"
+
+
+// Configuration
+// ----------------------
+#include "config.h"
+
+
+// Program options
+// ---------------------
+const char *argp_program_version = "dns-hijack 1.0.0";
+static char doc[] = "Dump dns that hijacks users who are not present in a db";
+const char *argp_program_bug_address = "<your e-mail address>";
+// port
+// trap ip
 
 
 int num_forks = 0;

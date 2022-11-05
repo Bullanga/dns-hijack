@@ -203,17 +203,16 @@ void message_big_endian_parse(Message *message) {
 
 void message_query_resolve(Message *message, const RR *records, int records_size)
 {
-  RR *rr;
-  rr = (RR *) records;
+    RR *rr;
+    rr = (RR *) records;
 
-  SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
+    SET_HEADER_QR(message->header.FLAGS, QR_RESPONSE);
 
-	for(int i = 0; i < records_size; i++)
-	{
-		if(0 == strcmp(message->question.QNAME, rr->NAME))
-      message_answer_RR_add(message, rr);
-    rr++;
-	}
+    for(int i = 0; i < records_size; i++) {
+        if(0 == strcmp(message->question.QNAME, rr->NAME))
+            message_answer_RR_add(message, rr);
+        rr++;
+    }
 }
 
 void parse_client_ip(char *target, const struct sockaddr *client) {

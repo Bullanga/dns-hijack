@@ -19,7 +19,7 @@ OBJEXT      := o
 #Flags, Libraries and Includes
 CFLAGS      := -Wall -O3 -g 
 LIB         := -lm -lpq
-INC         := -I$(INCDIR) -I/usr/include/postgresql
+INC         := -I$(INCDIR) -I/usr/include/postgresql -I/usr/local/include -I/usr/include/pgsql
 INCDEP      := -I$(INCDIR)
 
 #---------------------------------------------------------------------------------
